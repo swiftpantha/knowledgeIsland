@@ -52,6 +52,7 @@ void testGetKPIpoints (void);
 void testGetIPs (void);
 int rollDice (int no7);
 void failedExternalTests(void);
+void externalTest001(void);
 
 
 int main (int argc, char *argv[]) {
@@ -75,6 +76,7 @@ int main (int argc, char *argv[]) {
     testGetDiceValue ();
     testGetWhoseTurn ();
     testGetKPIpoints ();
+    externalTest001();
     printf("Starting EXT1 testing");
     failedExternalTests ();
     printf ("All tests passed. You are awesome!\n");
@@ -1340,4 +1342,19 @@ void failedExternalTests(void){
     a.destination[PATH_LIMIT - 1] = 0;
     a.disciplineFrom = 0, a.disciplineTo = 0;
     assert (isLegalAction(g, a) == FALSE);
+}
+
+// this is a wrong test from others
+// they assume we start with 24 points
+// whereas the rules say we start with just 2 campuses
+// online game version has 2 ARCs but it's not our spec
+void externalTest001(void) {
+    printf("External Test 001 start\n");
+    //action a;
+    int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
+    int dice[] = {9,10,8,12,6,5,3,11,3,11,4,6,4,7,9,2,8,10,5};
+    Game g = newGame(disciplines, dice);
+    //assert(getKPIpoints(g, 1) != 24); that's what they tested
+    assert(getKPIpoints(g, 1) == 20); // that's what it should be
+    printf("External Test 001 end\n");
 }
