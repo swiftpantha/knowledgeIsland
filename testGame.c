@@ -54,6 +54,7 @@ int rollDice (int no7);
 void failedExternalTest1(void);
 void externalTest001(void);
 void failedExternalTestSimon(void);
+void failedExternalTestMeghana(void);
 
 
 int main (int argc, char *argv[]) {
@@ -80,6 +81,7 @@ int main (int argc, char *argv[]) {
     externalTest001();
     failedExternalTest1 ();
     failedExternalTestSimon ();
+    failedExternalTestMeghana();
 
     printf("All tests passed. You are awesome!\n");
 
@@ -1330,7 +1332,7 @@ int rollDice (int no7) {
 }
 
 void failedExternalTest1(void){
-    printf("Testing EXT1");
+    printf("Testing EXT1\n");
     action a;
     int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
     int dice[] = {9,10,8,12,6,5,3,11,3,11,4,6,4,7,9,2,8,10,5};
@@ -1369,3 +1371,17 @@ void failedExternalTestSimon(void){
     Game g = newGame(disciplines, dice);
     assert(getExchangeRate(g, player, 1, 2) == 3);
 }
+
+void failedExternalTestMeghana(void){
+    action a;
+    int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
+    int dice[] = {9,10,8,12,6,5,3,11,3,11,4,6,4,7,9,2,8,10,5};
+    Game g = newGame(disciplines, dice);
+    throwDice(g, 2);
+    a.actionCode = OBTAIN_ARC;
+    strncpy(a.destination, "", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = 134542712, a.disciplineTo = -1076558664;
+    assert(isLegalAction(g, a) == FALSE);
+}
+
