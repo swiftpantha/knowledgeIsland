@@ -51,10 +51,11 @@ void testGetWhoseTurn (void);
 void testGetKPIpoints (void);
 void testGetIPs (void);
 int rollDice (int no7);
-void failedExternalTest1(void);
+void failedExternalTests(void);
 void externalTest001(void);
-void failedExternalTestSimon(void);
 void externalTest002(void);
+void failedExternalTestSimon(void);
+void failedExternalTestMeghana(void);
 
 
 int main (int argc, char *argv[]) {
@@ -79,16 +80,12 @@ int main (int argc, char *argv[]) {
     testGetWhoseTurn ();
     testGetKPIpoints ();
     externalTest001();
-<<<<<<< HEAD
-    failedExternalTest1 ();
+    failedExternalTests ();
     failedExternalTestSimon ();
-
-    printf("All tests passed. You are awesome!\n");
-=======
+    failedExternalTestMeghana();
     failedExternalTests ();
     externalTest002();
     printf ("All tests passed. You are awesome!\n");
->>>>>>> antonvino-logwork
 
     return EXIT_SUCCESS;
 }
@@ -1336,8 +1333,8 @@ int rollDice (int no7) {
     return diceScore;
 }
 
-void failedExternalTest1(void){
-    printf("Testing EXT1");
+void failedExternalTests(void){
+    printf("Testing EXT1\n");
     action a;
     int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
     int dice[] = {9,10,8,12,6,5,3,11,3,11,4,6,4,7,9,2,8,10,5};
@@ -1353,7 +1350,6 @@ void failedExternalTest1(void){
     assert (isLegalAction(g, a) == FALSE);
 }
 
-// Authors: zhifanyang
 // this is a wrong test from others
 // they assume we start with 24 points
 // whereas the rules say we start with just 2 campuses
@@ -1378,6 +1374,20 @@ void failedExternalTestSimon(void){
     assert(getExchangeRate(g, player, 1, 2) == 3);
 }
 
+void failedExternalTestMeghana(void){
+    action a;
+    int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
+    int dice[] = {9,10,8,12,6,5,3,11,3,11,4,6,4,7,9,2,8,10,5};
+    Game g = newGame(disciplines, dice);
+    throwDice(g, 2);
+    a.actionCode = OBTAIN_ARC;
+    strncpy(a.destination, "", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = 134542712, a.disciplineTo = -1076558664;
+    assert(isLegalAction(g, a) == FALSE);
+}
+
+
 // Authors: vidler 
 // Testing make
 // Author code style is kept!
@@ -1389,19 +1399,43 @@ void externalTest002(void) {
     int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
     int dice[] = {9,10,8,12,6,5,3,11,3,11,4,6,4,7,9,2,8,10,5};
     Game g = newGame(disciplines, dice);
+    printf("PLayer 3 had %d student in 0\n", getStudents(g, 3, 0));
+    printf("PLayer 3 had %d student in 1\n", getStudents(g, 3, 1));
+    printf("PLayer 3 had %d student in 2\n", getStudents(g, 3, 2));
+    printf("PLayer 3 had %d student in 3\n", getStudents(g, 3, 3));
+    printf("PLayer 3 had %d student in 4\n", getStudents(g, 3, 4));
+    printf("PLayer 3 had %d student in 5\n", getStudents(g, 3, 5));
+
+    printf("Throwing the dice three times\n");
     throwDice(g, 8);
-    throwDice(g, 2);
-    throwDice(g, 2);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    printf("PLayer 3 had %d student in 0\n", getStudents(g, 3, 0));
+    printf("PLayer 3 had %d student in 1\n", getStudents(g, 3, 1));
+    printf("PLayer 3 had %d student in 2\n", getStudents(g, 3, 2));
+    printf("PLayer 3 had %d student in 3\n", getStudents(g, 3, 3));
+    printf("PLayer 3 had %d student in 4\n", getStudents(g, 3, 4));
+    printf("PLayer 3 had %d student in 5\n", getStudents(g, 3, 5));
+
+    assert(getStudents(g, 3, 1) == 3);
+
     a.actionCode = RETRAIN_STUDENTS;
     strncpy(a.destination, "RRL", PATH_LIMIT - 1);
-    a.destination[PATH_LIMIT - 1] = 0;
-    a.disciplineFrom = 1, a.disciplineTo = 5;
+    a.disciplineFrom = 3, a.disciplineTo = 5;
     makeAction(g, a);
-    a.actionCode = RETRAIN_STUDENTS;
-    strncpy(a.destination, "RRL", PATH_LIMIT - 1);
-    a.destination[PATH_LIMIT - 1] = 0;
-    a.disciplineFrom = 2, a.disciplineTo = 5;
-    makeAction(g, a);
-    assert(getStudents(g, 3, 1) == 0);
+
+    printf("Make the Trade\n");
+
+    printf("PLayer 3 had %d student in 0\n", getStudents(g, 3, 0));
+    printf("PLayer 3 had %d student in 1\n", getStudents(g, 3, 1));
+    printf("PLayer 3 had %d student in 2\n", getStudents(g, 3, 2));
+    printf("PLayer 3 had %d student in 3\n", getStudents(g, 3, 3));
+    printf("PLayer 3 had %d student in 4\n", getStudents(g, 3, 4));
+    printf("PLayer 3 had %d student in 5\n", getStudents(g, 3, 5));
+
+
+    assert(getStudents(g, 3, 5) == 2);
+    printf("PLayer 3 had %d student in 1\n", getStudents(g, 3, 1));
+    assert(getStudents(g, 3, 1) == 3);
     printf("External Test 002 end\n");
 }

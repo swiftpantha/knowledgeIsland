@@ -674,93 +674,118 @@ int isLegalAction(Game g, action a) {
     int isLegal = TRUE;
     printf("Checking if an action is legal\n");
     int player = getWhoseTurn(g);
-    // Check all the basic stuff
-    if (getTurnNumber(g) == TERRA_NULLIS) {
+    int flag = 1;
+    // Protect from stupid shit
+    if ((a.actionCode < PASS) || (a.actionCode > RETRAIN_STUDENTS)) {
+        printf("Invalid Action Code\n");
+        flag = 0;
+    } else if (a.actionCode == RETRAIN_STUDENTS) {
+        printf("You've Called a retrain, checking if discipline");
+        printf("within the bounds\n");
+        // If it's a retrain action make sure the to
+        // and from are in a nice range.
+        if ((a.disciplineTo < STUDENT_THD)
+            || (a.disciplineTo > STUDENT_MMONEY)) {
+            printf("Invalid Discpline Code\n");
+            flag = 0;
+        }
+        if ((a.disciplineFrom < STUDENT_THD)
+            || (a.disciplineFrom > STUDENT_MMONEY)) {
+            printf("Invalid Discpline Code\n");
+            flag = 0;
+        }
+    }
+
+    printf("The Flag when testing is %d\n", flag);
+
+    if (flag == 1) {
+        // Check all the basic stuff
+        if (getTurnNumber(g) == TERRA_NULLIS) {
+            isLegal = FALSE;
+        } else if ((a.actionCode < 0) || (a.actionCode > MAX_ACTION)) {
+            isLegal = FALSE;
+        } else if ((getWhoseTurn(g) < 0) || (getWhoseTurn(g) > NUM_UNIS)) {
+            isLegal = FALSE;
+        } else if (a.actionCode == OBTAIN_IP_PATENT ||
+            a.actionCode == OBTAIN_PUBLICATION) {
+            isLegal = FALSE;
+        }
+        if (a.actionCode <= 3 && a.actionCode > 0 && isLegal) {
+            if (validString(a.destination) == FALSE) {
+                isLegal = FALSE;
+            } else if (validPoint(pathToPoint(a.destination).x,
+                pathToPoint(a.destination).y) == FALSE) {
+                isLegal = FALSE;
+            }
+        }
+
+        // edge actionEdge = pathToEdgeF (a.destination);
+
+        // Check that someone can get an arc
+        if (a.actionCode == OBTAIN_ARC && isLegal) {
+            printf("Checking if the arc is legal\n");
+            if (validNewEdge(g, pathToEdgeF(a.destination), player) == FALSE) {
+                printf("Geographically Valid Edge\n");
+                isLegal = FALSE;
+            } else if (getStudents(g, player, STUDENT_BQN) < 1) {
+                isLegal = FALSE;
+            } else if (getStudents(g, player, STUDENT_BPS) < 1) {
+                isLegal = FALSE;
+            }
+        }
+
+        // Check that someone can get a Campus
+        if (a.actionCode == BUILD_CAMPUS && isLegal) {
+            if (validNewContents(g, a.destination, player) == FALSE) {
+                isLegal = FALSE;
+            } else if (getStudents(g, player, STUDENT_BQN) < 1) {
+                isLegal = FALSE;
+            } else if (getStudents(g, player, STUDENT_BPS) < 1) {
+                isLegal = FALSE;
+            } else if (getStudents(g, player, STUDENT_MJ) < 1) {
+                isLegal = FALSE;
+            } else if (getStudents(g, player, STUDENT_MTV) < 1) {
+                isLegal = FALSE;
+            }
+        }
+
+        if (a.actionCode == BUILD_GO8 && isLegal) {
+            point actionPoint =  pathToPoint(a.destination);
+            if (g->gameBoard->points[actionPoint.x][actionPoint.y]->contents !=
+                player) {
+                isLegal = FALSE;
+            } else if (getStudents(g, player, STUDENT_MJ) < 2) {
+                isLegal = FALSE;
+            } else if (getStudents(g, player, STUDENT_MMONEY) < 3) {
+                isLegal = FALSE;
+            } else if (getTotalGO8s(g) == 8) {
+                isLegal = FALSE;
+            }
+        }
+
+        if (a.actionCode == START_SPINOFF && isLegal) {
+            isLegal = FALSE;  // always false
+            if (getStudents(g, player, STUDENT_MJ) < 1) {
+                isLegal = FALSE;
+            } else if (getStudents(g, player, STUDENT_MTV) < 1) {
+                isLegal = FALSE;
+            } else if (getStudents(g, player, STUDENT_MMONEY) < 1) {
+                isLegal = FALSE;
+            }
+        }
+
+        if (a.actionCode == RETRAIN_STUDENTS && isLegal) {
+            int exchange = getExchangeRate(g, player, a.disciplineFrom,
+                a.disciplineTo);
+            if (getStudents(g, player, a.disciplineFrom) < exchange) {
+                isLegal = FALSE;
+            } else if (a.disciplineFrom == STUDENT_THD) {
+                isLegal = FALSE;
+            }
+        }
+    } else if (flag == 0) {
         isLegal = FALSE;
-    } else if ((a.actionCode < 0) || (a.actionCode > MAX_ACTION)) {
-        isLegal = FALSE;
-    } else if ((getWhoseTurn(g) < 0) || (getWhoseTurn(g) > NUM_UNIS)) {
-        isLegal = FALSE;
-    } else if (a.actionCode == OBTAIN_IP_PATENT ||
-        a.actionCode == OBTAIN_PUBLICATION) {
-        isLegal = FALSE;
     }
-    if (a.actionCode <= 3 && a.actionCode > 0 && isLegal) {
-        if (validString(a.destination) == FALSE) {
-            isLegal = FALSE;
-        } else if (validPoint(pathToPoint(a.destination).x,
-            pathToPoint(a.destination).y) == FALSE) {
-            isLegal = FALSE;
-        }
-    }
-
-
-
-    // edge actionEdge = pathToEdgeF (a.destination);
-
-    // Check that someone can get an arc
-    if (a.actionCode == OBTAIN_ARC && isLegal) {
-        printf("Checking if the arc is legal\n");
-        if (validNewEdge(g, pathToEdgeF(a.destination), player) == FALSE) {
-            printf("Geographically Valid Edge\n");
-            isLegal = FALSE;
-        } else if (getStudents(g, player, STUDENT_BQN) < 1) {
-            isLegal = FALSE;
-        } else if (getStudents(g, player, STUDENT_BPS) < 1) {
-            isLegal = FALSE;
-        }
-    }
-
-    // Check that someone can get a Campus
-    if (a.actionCode == BUILD_CAMPUS && isLegal) {
-        if (validNewContents(g, a.destination, player) == FALSE) {
-            isLegal = FALSE;
-        } else if (getStudents(g, player, STUDENT_BQN) < 1) {
-            isLegal = FALSE;
-        } else if (getStudents(g, player, STUDENT_BPS) < 1) {
-            isLegal = FALSE;
-        } else if (getStudents(g, player, STUDENT_MJ) < 1) {
-            isLegal = FALSE;
-        } else if (getStudents(g, player, STUDENT_MTV) < 1) {
-            isLegal = FALSE;
-        }
-    }
-
-    if (a.actionCode == BUILD_GO8 && isLegal) {
-        point actionPoint =  pathToPoint(a.destination);
-        if (g->gameBoard->points[actionPoint.x][actionPoint.y]->contents !=
-            player) {
-            isLegal = FALSE;
-        } else if (getStudents(g, player, STUDENT_MJ) < 2) {
-            isLegal = FALSE;
-        } else if (getStudents(g, player, STUDENT_MMONEY) < 3) {
-            isLegal = FALSE;
-        } else if (getTotalGO8s(g) == 8) {
-            isLegal = FALSE;
-        }
-    }
-
-    if (a.actionCode == START_SPINOFF && isLegal) {
-        isLegal = FALSE;  // always false
-        if (getStudents(g, player, STUDENT_MJ) < 1) {
-            isLegal = FALSE;
-        } else if (getStudents(g, player, STUDENT_MTV) < 1) {
-            isLegal = FALSE;
-        } else if (getStudents(g, player, STUDENT_MMONEY) < 1) {
-            isLegal = FALSE;
-        }
-    }
-
-    if (a.actionCode == RETRAIN_STUDENTS && isLegal) {
-        int exchange = getExchangeRate(g, player, a.disciplineFrom,
-            a.disciplineTo);
-        if (getStudents(g, player, a.disciplineFrom) < exchange) {
-            isLegal = FALSE;
-        } else if (a.disciplineFrom == STUDENT_THD) {
-            isLegal = FALSE;
-        }
-    }
-
     return isLegal;
 }
 // --- get data about a specified player ---
