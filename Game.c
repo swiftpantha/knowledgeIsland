@@ -560,7 +560,7 @@ static void giveResource(Game g, int x, int y, int resource) {
 // see discipline codes above
 int getDiscipline(Game g, int regionID) {
     int x = 0;
-    int discipline;
+    int discipline = 0;
     while (x < NUM_REGIONS_X) {
         int y = 0;
         while (y < NUM_REGIONS_Y) {
@@ -580,7 +580,7 @@ int getDiscipline(Game g, int regionID) {
 // 2->->12
 int getDiceValue(Game g, int regionID) {
     int x = 0;
-    int dice;
+    int dice = 0;
     while (x < NUM_REGIONS_X) {
         int y = 0;
         while (y < NUM_REGIONS_Y) {
