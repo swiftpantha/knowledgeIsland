@@ -53,6 +53,7 @@ void testGetIPs (void);
 int rollDice (int no7);
 void failedExternalTests(void);
 void externalTest001(void);
+void externalTest002(void);
 
 
 int main (int argc, char *argv[]) {
@@ -77,8 +78,8 @@ int main (int argc, char *argv[]) {
     testGetWhoseTurn ();
     testGetKPIpoints ();
     externalTest001();
-    printf("Starting EXT1 testing");
     failedExternalTests ();
+    externalTest002();
     printf ("All tests passed. You are awesome!\n");
 
     return EXIT_SUCCESS;
@@ -1344,6 +1345,7 @@ void failedExternalTests(void){
     assert (isLegalAction(g, a) == FALSE);
 }
 
+// Authors: zhifanyang
 // this is a wrong test from others
 // they assume we start with 24 points
 // whereas the rules say we start with just 2 campuses
@@ -1357,4 +1359,41 @@ void externalTest001(void) {
     //assert(getKPIpoints(g, 1) != 24); that's what they tested
     assert(getKPIpoints(g, 1) == 20); // that's what it should be
     printf("External Test 001 end\n");
+}
+
+// Test for simon.shield
+void failedExternalTestSimon(void){
+    int player = 1; 
+    int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
+    int dice[] = {9,10,8,12,6,5,3,11,3,11,4,6,4,7,9,2,8,10,5};
+    Game g = newGame(disciplines, dice);
+    assert(getExchangeRate(g, player, 1, 2) == 3);
+}
+
+// Authors: vidler 
+// Testing make
+// Author code style is kept!
+// testing if we have 0 students left after trading
+// by the looks of it it's an invalid setup
+void externalTest002(void) {
+    printf("External Test 002 start\n");
+    action a;
+    int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
+    int dice[] = {9,10,8,12,6,5,3,11,3,11,4,6,4,7,9,2,8,10,5};
+    Game g = newGame(disciplines, dice);
+    throwDice(g, 8);
+    throwDice(g, 2);
+    throwDice(g, 2);
+    a.actionCode = RETRAIN_STUDENTS;
+    strncpy(a.destination, "RRL", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = 1, a.disciplineTo = 5;
+    makeAction(g, a);
+    a.actionCode = RETRAIN_STUDENTS;
+    strncpy(a.destination, "RRL", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = 2, a.disciplineTo = 5;
+    makeAction(g, a);
+    assert(getStudents(g, 3, 1) == 0);
+    printf("External Test 002 end\n");
 }
