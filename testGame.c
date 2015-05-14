@@ -51,7 +51,8 @@ void testGetWhoseTurn (void);
 void testGetKPIpoints (void);
 void testGetIPs (void);
 int rollDice (int no7);
-void failedExternalTests(void);
+void failedExternalTest1(void);
+void failedExternalTestSimon(void);
 
 
 int main (int argc, char *argv[]) {
@@ -76,8 +77,10 @@ int main (int argc, char *argv[]) {
     testGetWhoseTurn ();
     testGetKPIpoints ();
     printf("Starting EXT1 testing");
-    failedExternalTests ();
-    printf ("All tests passed. You are awesome!\n");
+    failedExternalTest1 ();
+    failedExternalTestSimon ();
+
+    printf("All tests passed. You are awesome!\n");
 
     return EXIT_SUCCESS;
 }
@@ -1325,7 +1328,7 @@ int rollDice (int no7) {
     return diceScore;
 }
 
-void failedExternalTests(void){
+void failedExternalTest1(void){
     printf("Testing EXT1");
     action a;
     int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
@@ -1341,3 +1344,13 @@ void failedExternalTests(void){
     a.disciplineFrom = 0, a.disciplineTo = 0;
     assert (isLegalAction(g, a) == FALSE);
 }
+
+// Test for simon.shield
+void failedExternalTestSimon(void){
+    int player = 1; 
+    int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
+    int dice[] = {9,10,8,12,6,5,3,11,3,11,4,6,4,7,9,2,8,10,5};
+    Game g = newGame(disciplines, dice);
+    assert(getExchangeRate(g, player, 1, 2) == 3);
+}
+
