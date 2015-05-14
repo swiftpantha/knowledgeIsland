@@ -1,5 +1,5 @@
 /* 
-
+Copyright
 Possible game struct
 
 */
@@ -15,7 +15,7 @@ Possible game struct
 #define NUM_POINTS 54
 #define NUM_POINTS_X 6
 #define NUM_POINTS_Y 11
-#define NUM_REGIONS_X 5 
+#define NUM_REGIONS_X 5
 #define NUM_REGIONS_Y 5
 #define NUM_EDGES 72
 #define NUM_DISCIPLINES 6
@@ -41,7 +41,7 @@ typedef struct _hexagon *Hexagon;
 typedef struct _point *Point;
 typedef struct _edge *Edge;
 
-// A university is defined by its ID. This also stores the uni's 
+// A university is defined by its ID. This also stores the uni's
 // statistics
 typedef struct _uni {
     int uniID;
@@ -71,7 +71,7 @@ typedef struct _hexagon {
 typedef struct _point {
     int x;
     int y;
-    int surroundingHexagons; 
+    int surroundingHexagons;
     Hexagon hexagons[MAX_REGIONS_PER_POINT];
     int contents;
     int retraining;
@@ -93,7 +93,7 @@ typedef struct _board {
     Hexagon regions[NUM_REGIONS_X][NUM_REGIONS_Y];
 } board;
 
-// The game struct stores the players in an array, the board, the 
+// The game struct stores the players in an array, the board, the
 // current turn, and the value of the dice roll
 typedef struct _game {
     Uni players[NUM_UNIS];
@@ -106,51 +106,51 @@ typedef struct _game {
 
 
 
-static point pathToPoint (path givenPath);
-static point charToPoint (char letter, int difference, point currentPoint);
-static edge pathToEdgeF (path givenPath);
-static int validPoint (int x, int y);
-static int validRegion (int x, int y);
-static edge findEdgeDetails (double x, double y, Game g);
-static int getTotalEdges (Game g);
-static int getTotalGO8s (Game g);
-static int validNewEdge (Game g, edge line, int player);
-static int validString (path destination);
-static int validNewContents (Game g, path destination, int player);
-static void createBoard (Game g, int discipline[], int dice[]);
-static void createPlayer (Game g, int player);
-static void createPoint (Game g, int x, int y);
-static void createRegion (Game g, int x, int y, int index, 
+static point pathToPoint(path givenPath);
+static point charToPoint(char letter, int difference, point currentPoint);
+static edge pathToEdgeF(path givenPath);
+static int validPoint(int x, int y);
+static int validRegion(int x, int y);
+static edge findEdgeDetails(double x, double y, Game g);
+static int getTotalEdges(Game g);
+static int getTotalGO8s(Game g);
+static int validNewEdge(Game g, edge line, int player);
+static int validString(path destination);
+static int validNewContents(Game g, path destination, int player);
+static void createBoard(Game g, int discipline[], int dice[]);
+static void createPlayer(Game g, int player);
+static void createPoint(Game g, int x, int y);
+static void createRegion(Game g, int x, int y, int index,
     int dice, int discipline);
-static void addRegionToPoints (Game g, int x, int y);
-static void createStartCampuses (Game g);
-static void createRetrainingPoints (Game g);
-static void disposeEdgesAndPlayers (Game g);
-static void disposePoints (Game g);
-static void disposeRegions (Game g);
-//static void startSpinoff(Game g, action a);
-static void buildCampus (Game g, action a);
-static void buildGO8 (Game g, action a);
-static void buildARC (Game g, action a);
-static void addPub (Game g, action a);
-static void addPatent (Game g, action a);
-static void retrainStudents (Game g, action a);
-static void giveResource (Game g, int x, int y, int resource);
+static void addRegionToPoints(Game g, int x, int y);
+static void createStartCampuses(Game g);
+static void createRetrainingPoints(Game g);
+static void disposeEdgesAndPlayers(Game g);
+static void disposePoints(Game g);
+static void disposeRegions(Game g);
+// Static void startSpinoff(Game g, action a);
+static void buildCampus(Game g, action a);
+static void buildGO8(Game g, action a);
+static void buildARC(Game g, action a);
+static void addPub(Game g, action a);
+static void addPatent(Game g, action a);
+static void retrainStudents(Game g, action a);
+static void giveResource(Game g, int x, int y, int resource);
 
 // Create a game in the inital state
-Game newGame (int discipline[], int dice[]) {
+Game newGame(int discipline[], int dice[]) {
     // Create a game
     Game g;
     g = malloc (sizeof (struct _game));
-    assert (g != NULL);
+    assert(g != NULL);
     // Initialise each uni with the appropriate details
     int i = 0;
     while (i < NUM_UNIS) {
-        createPlayer (g, i);
+        createPlayer(g, i);
         i++;
     }
 
-    createBoard (g, discipline, dice);
+    createBoard(g, discipline, dice);
 
     // Initialise the mostARCs and mostPubs as no one
     g->mostARCs = malloc (sizeof (struct _uni));
@@ -165,24 +165,24 @@ Game newGame (int discipline[], int dice[]) {
     g->roll = 0;
     // put in initial campuses and retraining centres
 
-    createStartCampuses (g);
-    createRetrainingPoints (g);
+    createStartCampuses(g);
+    createRetrainingPoints(g);
 
     return g;
 }
 
 // Create the board
-static void createBoard (Game g, int discipline[], int dice[]) {
+static void createBoard(Game g, int discipline[], int dice[]) {
     g->gameBoard = malloc (sizeof (struct _board));
-    assert (g->gameBoard != NULL);
+    assert(g->gameBoard != NULL);
 
     // Create the points that exist
     int x = 0;
     while (x < NUM_POINTS_X) {
         int y = 0;
         while (y < NUM_POINTS_Y) {
-            if (validPoint (x, y)) {
-                createPoint (g, x, y);
+            if (validPoint(x, y)) {
+                createPoint(g, x, y);
             }
             y++;
         }
@@ -196,10 +196,10 @@ static void createBoard (Game g, int discipline[], int dice[]) {
     while (x < NUM_REGIONS_X) {
         int y = 0;
         while (y < NUM_REGIONS_Y) {
-            if (validRegion (x, y)) {
-                createRegion (g, x, y, i, dice[i], discipline[i]);
+            if (validRegion(x, y)) {
+                createRegion(g, x, y, i, dice[i], discipline[i]);
                 // Add the region to the points around it
-                addRegionToPoints (g, x, y);
+                addRegionToPoints(g, x, y);
                 i++;
             }
             y++;
@@ -209,9 +209,9 @@ static void createBoard (Game g, int discipline[], int dice[]) {
 }
 
 // Initialise a uni with the appropriate details
-static void createPlayer (Game g, int player) {
+static void createPlayer(Game g, int player) {
     g->players[player] = malloc (sizeof (struct _uni));
-    assert (g->players[player] != NULL);
+    assert(g->players[player] != NULL);
     g->players[player]->uniID = player + 1;
     g->players[player]->KPIs = 20;
     g->players[player]->campuses = 2;
@@ -228,9 +228,9 @@ static void createPlayer (Game g, int player) {
 }
 
 // Create an empty point
-static void createPoint (Game g, int x, int y) {
+static void createPoint(Game g, int x, int y) {
     g->gameBoard->points[x][y] = malloc (sizeof (struct _point));
-    assert (g->gameBoard->points[x][y] != NULL);
+    assert(g->gameBoard->points[x][y] != NULL);
     g->gameBoard->points[x][y]->x = x;
     g->gameBoard->points[x][y]->y = y;
     g->gameBoard->points[x][y]->surroundingHexagons = 0;
@@ -238,9 +238,10 @@ static void createPoint (Game g, int x, int y) {
 }
 
 // Create a region
-static void createRegion (Game g, int x, int y, int index, int dice, int discipline) {
+static void createRegion(Game g, int x, int y, int index,
+    int dice, int discipline) {
     g->gameBoard->regions[x][y] = malloc (sizeof (struct _hexagon));
-    assert (g->gameBoard->regions[x][y] != NULL);
+    assert(g->gameBoard->regions[x][y] != NULL);
     g->gameBoard->regions[x][y]->x = x;
     g->gameBoard->regions[x][y]->y = y;
     g->gameBoard->regions[x][y]->regionID = index;
@@ -249,14 +250,14 @@ static void createRegion (Game g, int x, int y, int index, int dice, int discipl
 }
 
 // Put the region in the relevant points
-static void addRegionToPoints (Game g, int x, int y) {
+static void addRegionToPoints(Game g, int x, int y) {
     int xPoint = x;
     while (xPoint < x + 2) {
         int yPoint = 2*y + x%2;
         while (yPoint < 2*y  + x%2 + 3) {
             g->gameBoard->points[xPoint][yPoint]->
                 hexagons[g->gameBoard->
-                points[xPoint][yPoint]->surroundingHexagons] 
+                points[xPoint][yPoint]->surroundingHexagons]
                 = g->gameBoard->regions[x][y];
             g->gameBoard->points[xPoint][yPoint]->
                 surroundingHexagons++;
@@ -267,7 +268,7 @@ static void addRegionToPoints (Game g, int x, int y) {
 }
 
 // Add the starting campuses
-static void createStartCampuses (Game g) {
+static void createStartCampuses(Game g) {
     g->gameBoard->points[2][0]->contents = CAMPUS_A;
     g->gameBoard->points[3][10]->contents = CAMPUS_A;
     g->gameBoard->points[0][3]->contents = CAMPUS_B;
@@ -277,7 +278,7 @@ static void createStartCampuses (Game g) {
 }
 
 // Add the retraining centres
-static void createRetrainingPoints (Game g) {
+static void createRetrainingPoints(Game g) {
     g->gameBoard->points[3][1]->retraining = STUDENT_MMONEY;
     g->gameBoard->points[4][1]->retraining = STUDENT_MMONEY;
     g->gameBoard->points[5][5]->retraining = STUDENT_BQN;
@@ -292,48 +293,47 @@ static void createRetrainingPoints (Game g) {
 
 
 // free all the memory malloced for the game
-void disposeGame (Game g) {
-
+void disposeGame(Game g) {
     if (g->mostARCs->ARCGrants == 0) {
-        free (g->mostARCs);
+        free(g->mostARCs);
     }
     if (g->mostPubs->papers == 0) {
-        free (g->mostPubs);
+        free(g->mostPubs);
     }
-    
-    disposeEdgesAndPlayers (g);
-    disposePoints (g);
-    disposeRegions (g);
 
-    free (g->gameBoard);
-    free (g);
+    disposeEdgesAndPlayers(g);
+    disposePoints(g);
+    disposeRegions(g);
+
+    free(g->gameBoard);
+    free(g);
 }
 
 // free all the memory malloced for edges and players
-static void disposeEdgesAndPlayers (Game g) {
+static void disposeEdgesAndPlayers(Game g) {
     int numEdges = 0;
     int i = 0;
     while (i < NUM_UNIS) {
-        numEdges += getARCs (g, i + 1);
-        free (g->players[i]);
+        numEdges += getARCs(g, i + 1);
+        free(g->players[i]);
         i++;
     }
     i = 0;
     while (i < numEdges) {
-        free (g->gameBoard->edgesUsed[i]);
+        free(g->gameBoard->edgesUsed[i]);
         i++;
     }
 }
 
 // free all the memory malloced for points
-static void disposePoints (Game g) {
+static void disposePoints(Game g) {
     int x = 0;
     int y = 0;
     while (x < NUM_POINTS_X) {
         y = 0;
         while (y < NUM_POINTS_Y) {
-            if (validPoint (x, y)) {
-                free (g->gameBoard->points[x][y]);
+            if (validPoint(x, y)) {
+                free(g->gameBoard->points[x][y]);
             }
             y++;
         }
@@ -342,15 +342,15 @@ static void disposePoints (Game g) {
 }
 
 // free all the memory malloced for regions
-static void disposeRegions (Game g) {
+static void disposeRegions(Game g) {
     int x = 0;
     int y = 0;
 
     while (x < NUM_REGIONS_X) {
         y = 0;
         while (y < NUM_REGIONS_Y) {
-            if (validRegion (x, y)) {
-                free (g->gameBoard->regions[x][y]);
+            if (validRegion(x, y)) {
+                free(g->gameBoard->regions[x][y]);
             }
             y++;
         }
@@ -359,75 +359,75 @@ static void disposeRegions (Game g) {
 }
 
 
-// make the specified action for the current player and update the 
-// game state accordingly->  
+// make the specified action for the current player and update the
+// game state accordingly->
 // The function may assume that the action requested is legal->
 // START_SPINOFF is not a legal action = here
-void makeAction (Game g, action a) {
+void makeAction(Game g, action a) {
     int actionCode = a.actionCode;
     if (actionCode == BUILD_CAMPUS) {
         printf("Building a campus...\n");
-        buildCampus (g, a);
+        buildCampus(g, a);
         printf("Completed a campus...\n");
     } else if (actionCode == BUILD_GO8) {
         printf("Building a GO8...\n");
-        buildGO8 (g, a);
+        buildGO8(g, a);
         printf("Completed a GO8...\n");
-    } else if (actionCode == OBTAIN_ARC) {        
+    } else if (actionCode == OBTAIN_ARC) {
         printf("Building an ARC...\n");
-        buildARC (g, a);
+        buildARC(g, a);
         printf("Completed a ARC...\n");
     } else if (actionCode == OBTAIN_PUBLICATION) {
         printf("Obtained a publication...\n");
-        addPub (g, a);
+        addPub(g, a);
         printf("Completed a publication...\n");
     } else if (actionCode == OBTAIN_IP_PATENT) {
         printf("Obtaining a patent...\n");
-        addPatent (g, a);        
+        addPatent(g, a);
         printf("Completed a patent...\n");
     } else if (actionCode == RETRAIN_STUDENTS) {
         printf("Retraining students...\n");
-        retrainStudents (g, a);
+        retrainStudents(g, a);
         printf("Completed a students...\n");
     }
 }
 
 // builds a campus for the current player in the location specified
-static void buildCampus (Game g, action a) {
-    point location = pathToPoint (a.destination);
-    assert (location.x >= 0);
-    int player = getWhoseTurn (g);
+static void buildCampus(Game g, action a) {
+    point location = pathToPoint(a.destination);
+    assert(location.x >= 0);
+    int player = getWhoseTurn(g);
     g->gameBoard->points[location.x][location.y]->contents = player;
     g->players[player - 1]->campuses++;
     g->players[player - 1]->students[STUDENT_BPS]--;
     g->players[player - 1]->students[STUDENT_BQN]--;
     g->players[player - 1]->students[STUDENT_MJ]--;
     g->players[player - 1]->students[STUDENT_MTV]--;
-    //10 KPI per campus
+    // 10 KPI per campus
     g->players[player - 1]->KPIs = g->players[player - 1]->KPIs + 10;
 }
 
 // builds a GO8 campus for the current player in the location specified
-static void buildGO8 (Game g, action a) {
-    point location = pathToPoint (a.destination);
-    assert (location.x >= 0);
-    int player = getWhoseTurn (g);
+static void buildGO8(Game g, action a) {
+    point location = pathToPoint(a.destination);
+    assert(location.x >= 0);
+    int player = getWhoseTurn(g);
     g->gameBoard->points[location.x][location.y]->contents = player + 3;
     g->players[player - 1]->campuses--;
     g->players[player - 1]->GO8Campuses++;
     g->players[player - 1]->students[STUDENT_MJ] += -2;
     g->players[player - 1]->students[STUDENT_MMONEY] += -3;
-    //Give 'em an extra 10 per KPI
+    // Give 'em an extra 10 per KPI
     g->players[player - 1]->KPIs = g->players[player - 1]->KPIs + 10;
 }
 
 // builds an ARC for the current player in the location specified
-static void buildARC (Game g, action a) {
-    int numEdges = getTotalEdges (g);
-    edge location = pathToEdgeF (a.destination);
-    int player = getWhoseTurn (g);
+static void buildARC(Game g, action a) {
+    int numEdges = getTotalEdges(g);
+    edge location = pathToEdgeF(a.destination);
+    int player = getWhoseTurn(g);
     g->gameBoard->edgesUsed[numEdges] = malloc (sizeof (struct _edge));
-    assert (g->gameBoard->edgesUsed[numEdges] != NULL);
+    assert(g->gameBoard->edgesUsed[numEdges] != NULL);
     g->gameBoard->edgesUsed[numEdges]->ARC = g->players[player - 1];
     g->gameBoard->edgesUsed[numEdges]->x = location.x;
     g->gameBoard->edgesUsed[numEdges]->y = location.y;
@@ -435,12 +435,12 @@ static void buildARC (Game g, action a) {
     g->players[player - 1]->ARCGrants++;
     g->players[player - 1]->students[STUDENT_BPS]--;
     g->players[player - 1]->students[STUDENT_BQN]--;
-    //Give 'em a couple of points for a road
+    // Give 'em a couple of points for a road
     g->players[player - 1]->KPIs = g->players[player - 1]->KPIs + 2;
 
     if (g->players[player - 1]->ARCGrants  > g->mostARCs->ARCGrants) {
         if (g->mostARCs->ARCGrants == 0) {
-            free (g->mostARCs);
+            free(g->mostARCs);
             g->mostARCs = g->players[player - 1];
             g->mostARCs->KPIs += 10;
         } else {
@@ -452,16 +452,16 @@ static void buildARC (Game g, action a) {
 }
 
 // gives current player a publication
-static void addPub (Game g, action a) {
-    int player = getWhoseTurn (g);
-    g->players[player - 1]->papers ++;
+static void addPub(Game g, action a) {
+    int player = getWhoseTurn(g);
+    g->players[player - 1]->papers++;
     g->players[player - 1]->students[STUDENT_MJ]--;
     g->players[player - 1]->students[STUDENT_MTV]--;
     g->players[player - 1]->students[STUDENT_MMONEY]--;
 
     if (g->players[player - 1]->papers  > g->mostPubs->papers) {
         if (g->mostPubs->papers == 0) {
-            free (g->mostPubs);
+            free(g->mostPubs);
             g->mostPubs = g->players[player - 1];
             g->mostPubs->KPIs += 10;
         } else {
@@ -473,41 +473,41 @@ static void addPub (Game g, action a) {
 }
 
 // gives current player a patent
-static void addPatent (Game g, action a) {
-    int player = getWhoseTurn (g);
-    g->players[player - 1]->patents ++;
+static void addPatent(Game g, action a) {
+    int player = getWhoseTurn(g);
+    g->players[player - 1]->patents++;
     g->players[player - 1]->students[STUDENT_MJ]--;
     g->players[player - 1]->students[STUDENT_MTV]--;
     g->players[player - 1]->students[STUDENT_MMONEY]--;
-    //Give 'em some points for some special paper
+    // Give 'em some points for some special paper
     g->players[player - 1]->KPIs = g->players[player - 1]->KPIs + 10;
 }
 
 // retrains the current player's students
-static void retrainStudents (Game g, action a) {
-    int player = getWhoseTurn (g);
-    int ratio = getExchangeRate (g, player, 
+static void retrainStudents(Game g, action a) {
+    int player = getWhoseTurn(g);
+    int ratio = getExchangeRate(g, player,
         a.disciplineFrom, a.disciplineTo);
     g->players[player - 1]->students[a.disciplineFrom] += -1 * ratio;
-    g->players[player - 1]->students[a.disciplineTo] ++;
+    g->players[player - 1]->students[a.disciplineTo]++;
 }
 
-// advance the game to the next turn, 
+// advance the game to the next turn,
 // assuming that the dice has just been rolled and produced diceScore
-// the game starts in turn -1 (we call this state "Terra Nullis") and 
-// moves to turn 0 as soon as the first dice is thrown-> 
-void throwDice (Game g, int diceScore) {
+// the game starts in turn -1 (we call this state "Terra Nullis") and
+// moves to turn 0 as soon as the first dice is thrown->
+void throwDice(Game g, int diceScore) {
     g->currentTurn++;
 
-    //give out resources based on diceScore
-    int x = 0;
+    // give out resources based on diceScore
+        int x = 0;
     while (x < NUM_REGIONS_X) {
         int y = 0;
         while (y < NUM_REGIONS_Y) {
-            if (validRegion (x, y)) {
+            if (validRegion(x, y)) {
                 if (g->gameBoard->regions[x][y]->diceValue == diceScore) {
                     int resource = g->gameBoard->regions[x][y]->discipline;
-                    giveResource (g, x, y, resource);
+                    giveResource(g, x, y, resource);
                 }
             }
             y++;
@@ -528,14 +528,14 @@ void throwDice (Game g, int diceScore) {
 }
 
 // distribute resources from a particular region to surrounding campuses
-static void giveResource (Game g, int x, int y, int resource) {
+static void giveResource(Game g, int x, int y, int resource) {
     int xPoint = x;
     while (xPoint < x + 2) {
         int yPoint = 2*y + x%2;
         while (yPoint < 2*y  + x%2 + 3) {
-            if (g->gameBoard->points[xPoint][yPoint]->contents != 
+            if (g->gameBoard->points[xPoint][yPoint]->contents !=
                 VACANT_VERTEX) {
-                if (g->gameBoard->points[xPoint][yPoint]->contents <= 
+                if (g->gameBoard->points[xPoint][yPoint]->contents <=
                     NUM_UNIS) {
                     g->players[g->gameBoard->
                         points[xPoint][yPoint]->contents - 1]->
@@ -556,15 +556,15 @@ static void giveResource (Game g, int x, int y, int resource) {
 /* **** Functions which GET data about the game aka GETTERS **** */
 
 // what type of students are produced by the specified region?
-// regionID is the index of the region in the newGame arrays (above) 
+// regionID is the index of the region in the newGame arrays (above)
 // see discipline codes above
-int getDiscipline (Game g, int regionID) {
+int getDiscipline(Game g, int regionID) {
     int x = 0;
     int discipline;
     while (x < NUM_REGIONS_X) {
         int y = 0;
         while (y < NUM_REGIONS_Y) {
-            if (validRegion (x, y)){
+            if (validRegion(x, y)) {
                 if (g->gameBoard->regions[x][y]->regionID == regionID) {
                     discipline = g->gameBoard->regions[x][y]->discipline;
                 }
@@ -578,13 +578,13 @@ int getDiscipline (Game g, int regionID) {
 
 // what dice value produces students in the specified region?
 // 2->->12
-int getDiceValue (Game g, int regionID) {
+int getDiceValue(Game g, int regionID) {
     int x = 0;
     int dice;
     while (x < NUM_REGIONS_X) {
         int y = 0;
         while (y < NUM_REGIONS_Y) {
-            if (validRegion (x, y)) {
+            if (validRegion(x, y)) {
                 if (g->gameBoard->regions[x][y]->regionID == regionID) {
                     dice = g->gameBoard->regions[x][y]->diceValue;
                 }
@@ -597,26 +597,26 @@ int getDiceValue (Game g, int regionID) {
 }
 
 // which university currently has the prestige award for the most ARCs?
-// this is NO_ONE until the first arc is purchased after the game 
-// has started->  
-int getMostARCs (Game g) {
+// this is NO_ONE until the first arc is purchased after the game
+// has started->
+int getMostARCs(Game g) {
     return g->mostARCs->uniID;
 }
 
 // which university currently has the prestige award for the most pubs?
 // this is NO_ONE until the first publication is made->
-int getMostPublications (Game g) {
+int getMostPublications(Game g) {
     return g->mostPubs->uniID;
 }
 
 // return the current turn number of the game -1,0,1, ->->
-int getTurnNumber (Game g) {
+int getTurnNumber(Game g) {
     return g->currentTurn;
 }
 
-// return the player id of the player whose turn it is 
+// return the player id of the player whose turn it is
 // the result of this function is NO_ONE during Terra Nullis
-int getWhoseTurn (Game g) {
+int getWhoseTurn(Game g) {
     int uniID = (g->currentTurn)%NUM_UNIS + 1;
     if (g->currentTurn == -1) {
         uniID = NO_ONE;
@@ -624,137 +624,137 @@ int getWhoseTurn (Game g) {
     return uniID;
 }
 
-// return the contents of the given vertex (ie campus code or 
+// return the contents of the given vertex (ie campus code or
 // VACANT_VERTEX)
 int getCampus(Game g, path pathToVertex) {
-    point thePoint = pathToPoint (pathToVertex);
-    assert (thePoint.x >= 0);
+    point thePoint = pathToPoint(pathToVertex);
+    assert(thePoint.x >= 0);
     return g->gameBoard->points[thePoint.x][thePoint.y]->contents;
 }
 
 // the contents of the given edge (ie ARC code or vacent ARC)
-int getARC (Game g, path pathToEdge) {
-    edge theEdge = pathToEdgeF (pathToEdge);
-    theEdge = findEdgeDetails (theEdge.x, theEdge.y, g);
+int getARC(Game g, path pathToEdge) {
+    edge theEdge = pathToEdgeF(pathToEdge);
+    theEdge = findEdgeDetails(theEdge.x, theEdge.y, g);
     int uniID = theEdge.ARC->uniID;
     if (uniID == VACANT_ARC) {
-        free (theEdge.ARC);
+        free(theEdge.ARC);
     }
     return uniID;
 }
 
-//MOSS PAULY
+// MOSS PAULY
 
 // returns TRUE if it is legal for the current
 // player to make the specified action, FALSE otherwise->
 //
-// "legal" means everything is legal: 
-//   * that the action code is a valid action code which is legal to 
+// "legal" means everything is legal:
+//   * that the action code is a valid action code which is legal to
 //     be made at this time
-//   * that any path is well formed and legal ie consisting only of 
-//     the legal direction characters and of a legal length, 
+//   * that any path is well formed and legal ie consisting only of
+//     the legal direction characters and of a legal length,
 //     and which does not leave the island into the sea at any stage->
-//   * that disciplines mentioned in any retraining actions are valid 
+//   * that disciplines mentioned in any retraining actions are valid
 //     discipline numbers, and that the university has sufficient
 //     students of the correct type to perform the retraining
 //
-// eg when placing a campus consider such things as: 
+// eg when placing a campus consider such things as:
 //   * is the path a well formed legal path
 //   * does it lead to a vacent vertex?
-//   * under the rules of the game are they allowed to place a 
+//   * under the rules of the game are they allowed to place a
 //     campus at that vertex?  (eg is it adjacent to one of their ARCs?)
-//   * does the player have the 4 specific students required to pay for 
+//   * does the player have the 4 specific students required to pay for
 //     that campus?
-// It is not legal to make any action during Terra Nullis ie 
+// It is not legal to make any action during Terra Nullis ie
 // before the game has started->
-// It is not legal for a player to make the moves OBTAIN_PUBLICATION 
+// It is not legal for a player to make the moves OBTAIN_PUBLICATION
 // or OBTAIN_IP_PATENT (they can make the move START_SPINOFF)
 // you can assume that any pths passed in are NULL terminated strings->
-int isLegalAction (Game g, action a){
+int isLegalAction(Game g, action a) {
     int isLegal = TRUE;
     printf("Checking if an action is legal\n");
-    int player = getWhoseTurn (g);
-    //Check all the basic stuff
-    if (getTurnNumber(g) == TERRA_NULLIS){
+    int player = getWhoseTurn(g);
+    // Check all the basic stuff
+    if (getTurnNumber(g) == TERRA_NULLIS) {
         isLegal = FALSE;
     } else if ((a.actionCode < 0) || (a.actionCode > MAX_ACTION)) {
         isLegal = FALSE;
     } else if ((getWhoseTurn(g) < 0) || (getWhoseTurn(g) > NUM_UNIS)) {
         isLegal = FALSE;
-    } else if (a.actionCode == OBTAIN_IP_PATENT || 
+    } else if (a.actionCode == OBTAIN_IP_PATENT ||
         a.actionCode == OBTAIN_PUBLICATION) {
         isLegal = FALSE;
     }
     if (a.actionCode <= 3 && a.actionCode > 0 && isLegal) {
         if (validString(a.destination) == FALSE) {
             isLegal = FALSE;
-        } else if (validPoint(pathToPoint(a.destination).x, 
+        } else if (validPoint(pathToPoint(a.destination).x,
             pathToPoint(a.destination).y) == FALSE) {
             isLegal = FALSE;
         }
     }
 
 
-    
-    //edge actionEdge = pathToEdgeF (a.destination);
 
-    //Check that someone can get an arc
+    // edge actionEdge = pathToEdgeF (a.destination);
+
+    // Check that someone can get an arc
     if (a.actionCode == OBTAIN_ARC && isLegal) {
         printf("Checking if the arc is legal\n");
-        if (validNewEdge (g, pathToEdgeF (a.destination), player) == FALSE){
+        if (validNewEdge(g, pathToEdgeF(a.destination), player) == FALSE) {
             printf("Geographically Valid Edge\n");
             isLegal = FALSE;
-        } else if (getStudents (g, player, STUDENT_BQN) < 1) {
+        } else if (getStudents(g, player, STUDENT_BQN) < 1) {
             isLegal = FALSE;
-        } else if (getStudents (g, player, STUDENT_BPS) < 1) {
+        } else if (getStudents(g, player, STUDENT_BPS) < 1) {
             isLegal = FALSE;
-        } 
+        }
     }
 
-    //Check that someone can get a Campus
+    // Check that someone can get a Campus
     if (a.actionCode == BUILD_CAMPUS && isLegal) {
-        if (validNewContents (g, a.destination, player) == FALSE){
+        if (validNewContents(g, a.destination, player) == FALSE) {
             isLegal = FALSE;
-        } else if (getStudents (g, player, STUDENT_BQN) < 1) {
+        } else if (getStudents(g, player, STUDENT_BQN) < 1) {
             isLegal = FALSE;
-        } else if (getStudents (g, player, STUDENT_BPS) < 1) {
+        } else if (getStudents(g, player, STUDENT_BPS) < 1) {
             isLegal = FALSE;
-        } else if (getStudents (g, player, STUDENT_MJ) < 1) {
+        } else if (getStudents(g, player, STUDENT_MJ) < 1) {
             isLegal = FALSE;
-        } else if (getStudents (g, player, STUDENT_MTV) < 1) {
+        } else if (getStudents(g, player, STUDENT_MTV) < 1) {
             isLegal = FALSE;
         }
     }
 
     if (a.actionCode == BUILD_GO8 && isLegal) {
-        point actionPoint =  pathToPoint (a.destination);
-        if (g->gameBoard->points[actionPoint.x][actionPoint.y]->contents != 
+        point actionPoint =  pathToPoint(a.destination);
+        if (g->gameBoard->points[actionPoint.x][actionPoint.y]->contents !=
             player) {
             isLegal = FALSE;
-        } else if (getStudents (g, player, STUDENT_MJ) < 2) {
+        } else if (getStudents(g, player, STUDENT_MJ) < 2) {
             isLegal = FALSE;
-        } else if (getStudents (g, player, STUDENT_MMONEY) < 3) {
+        } else if (getStudents(g, player, STUDENT_MMONEY) < 3) {
             isLegal = FALSE;
-        } else if (getTotalGO8s (g) == 8) {
+        } else if (getTotalGO8s(g) == 8) {
             isLegal = FALSE;
         }
     }
 
     if (a.actionCode == START_SPINOFF && isLegal) {
-        isLegal = FALSE; // always false
-        if (getStudents (g, player, STUDENT_MJ) < 1) {
+        isLegal = FALSE;  // always false
+        if (getStudents(g, player, STUDENT_MJ) < 1) {
             isLegal = FALSE;
-        } else if (getStudents (g, player, STUDENT_MTV) < 1) {
+        } else if (getStudents(g, player, STUDENT_MTV) < 1) {
             isLegal = FALSE;
-        } else if (getStudents (g, player, STUDENT_MMONEY) < 1) {
+        } else if (getStudents(g, player, STUDENT_MMONEY) < 1) {
             isLegal = FALSE;
         }
     }
 
     if (a.actionCode == RETRAIN_STUDENTS && isLegal) {
-        int exchange = getExchangeRate (g, player, a.disciplineFrom, 
+        int exchange = getExchangeRate(g, player, a.disciplineFrom,
             a.disciplineTo);
-        if (getStudents (g, player, a.disciplineFrom) < exchange) {
+        if (getStudents(g, player, a.disciplineFrom) < exchange) {
             isLegal = FALSE;
         } else if (a.disciplineFrom == STUDENT_THD) {
             isLegal = FALSE;
@@ -766,112 +766,111 @@ int isLegalAction (Game g, action a){
 // --- get data about a specified player ---
 
 // return the number of KPI points the specified player currently has
-int getKPIpoints (Game g, int player) {
+int getKPIpoints(Game g, int player) {
     return g->players[player - 1]->KPIs;
 }
 
 // return the number of ARC grants the specified player currently has
-int getARCs (Game g, int player) {
-    if (player <= 0){
+int getARCs(Game g, int player) {
+    if (player <= 0) {
         player = 1;
     }
     return g->players[player - 1]->ARCGrants;
 }
 
 // return the number of GO8 campuses the specified player currently has
-int getGO8s (Game g, int player) {
+int getGO8s(Game g, int player) {
     return g->players[player - 1]->GO8Campuses;
 }
 
 // return the number of normal Campuses the specified player currently has
-int getCampuses (Game g, int player) {
+int getCampuses(Game g, int player) {
     return g->players[player - 1]->campuses;
 }
 
 // return the number of IP Patents the specified player currently has
-int getIPs (Game g, int player) {
+int getIPs(Game g, int player) {
     return g->players[player - 1]->patents;
 }
 
 // return the number of Publications the specified player currently has
-int getPublications (Game g, int player) {
+int getPublications(Game g, int player) {
     return g->players[player - 1]->papers;
 }
 
-// return the number of students of the specified discipline type 
+// return the number of students of the specified discipline type
 // the specified player currently has
-int getStudents (Game g, int player, int discipline) {
+int getStudents(Game g, int player, int discipline) {
     return g->players[player - 1]->students[discipline];
 }
 
 // return how many students of discipline type disciplineFrom
-// the specified player would need to retrain in order to get one 
-// student of discipline type disciplineTo->  This will depend 
+// the specified player would need to retrain in order to get one
+// student of discipline type disciplineTo->  This will depend
 // on what retraining centers, if any, they have a campus at->
-int getExchangeRate (Game g, int player, 
+int getExchangeRate(Game g, int player,
                      int disciplineFrom, int disciplineTo) {
     int ratio = 3;
     if (disciplineFrom == STUDENT_MMONEY) {
-        if (g->gameBoard->points[3][1]->contents == player 
+        if (g->gameBoard->points[3][1]->contents == player
             || g->gameBoard->points[3][1]->contents == player - NUM_UNIS) {
             ratio = 2;
-        } else if (g->gameBoard->points[4][1]->contents == player 
+        } else if (g->gameBoard->points[4][1]->contents == player
             || g->gameBoard->points[4][1]->contents == player - NUM_UNIS) {
             ratio = 2;
         }
     } else if (disciplineFrom == STUDENT_BQN) {
-        if (g->gameBoard->points[5][5]->contents == player 
+        if (g->gameBoard->points[5][5]->contents == player
             || g->gameBoard->points[5][5]->contents == player - NUM_UNIS) {
             ratio = 2;
-        } else if (g->gameBoard->points[5][6]->contents == player 
+        } else if (g->gameBoard->points[5][6]->contents == player
             || g->gameBoard->points[5][6]->contents == player - NUM_UNIS) {
             ratio = 2;
         }
     } else if (disciplineFrom == STUDENT_MJ) {
-        if (g->gameBoard->points[4][8]->contents == player 
+        if (g->gameBoard->points[4][8]->contents == player
             || g->gameBoard->points[4][8]->contents == player - NUM_UNIS) {
             ratio = 2;
-        } else if (g->gameBoard->points[4][9]->contents == player 
+        } else if (g->gameBoard->points[4][9]->contents == player
             || g->gameBoard->points[4][9]->contents == player - NUM_UNIS) {
             ratio = 2;
         }
     } else if (disciplineFrom == STUDENT_BPS) {
-        if (g->gameBoard->points[1][8]->contents == player 
+        if (g->gameBoard->points[1][8]->contents == player
             || g->gameBoard->points[1][8]->contents == player - NUM_UNIS) {
             ratio = 2;
-        } else if (g->gameBoard->points[1][9]->contents == player 
+        } else if (g->gameBoard->points[1][9]->contents == player
             || g->gameBoard->points[1][9]->contents == player - NUM_UNIS) {
             ratio = 2;
         }
     } else if (disciplineFrom == STUDENT_MTV) {
-        if (g->gameBoard->points[1][1]->contents == player 
+        if (g->gameBoard->points[1][1]->contents == player
             || g->gameBoard->points[1][1]->contents == player - NUM_UNIS) {
             ratio = 2;
-        } else if (g->gameBoard->points[2][1]->contents == player 
+        } else if (g->gameBoard->points[2][1]->contents == player
             || g->gameBoard->points[2][1]->contents == player - NUM_UNIS) {
             ratio = 2;
         }
     }
-    return ratio; 
+    return ratio;
 }
 
 // converts a given path to the point's coordinates
-static point pathToPoint (path givenPath) {
-    
+static point pathToPoint(path givenPath) {
     point newPoint;
     newPoint.x = 2;
     newPoint.y = 0;
     int diff = START_DIFF;
-    
+
     int i = 0;
     while (givenPath[i] != '\0') {
         printf("Path to point while loop entered\n");
-        if (!(givenPath[i] == 'L' || givenPath[i] == 'R' 
+        if (!(givenPath[i] == 'L' || givenPath[i] == 'R'
             || givenPath[i] == 'B')) {
             newPoint.x = -1;
         } else {
             point oldPoint = newPoint;
-            newPoint = charToPoint (givenPath[i], diff, newPoint);
+            newPoint = charToPoint(givenPath[i], diff, newPoint);
             if (newPoint.x != -1) {
                 if (oldPoint.x + 1 == newPoint.x) {
                     diff = COL_INC;
@@ -891,21 +890,21 @@ static point pathToPoint (path givenPath) {
 }
 
 // converts a given path to the edge's coordinates
-static edge pathToEdgeF (path givenPath) {
+static edge pathToEdgeF(path givenPath) {
     printf("Entered pathToEdgeF function\n");
     point newPoint;
     newPoint.x = 2;
     newPoint.y = 0;
     int diff = START_DIFF;
-    
+
     int i = 0;
     while (givenPath[i] != '\0') {
         printf("Converting path to edge coords\n");
-        assert (givenPath[i] == 'L' 
-            || givenPath[i] == 'R' 
+        assert(givenPath[i] == 'L'
+            || givenPath[i] == 'R'
             || givenPath[i] == 'B');
         point oldPoint = newPoint;
-        newPoint = charToPoint (givenPath[i], diff, newPoint);
+        newPoint = charToPoint(givenPath[i], diff, newPoint);
         if (oldPoint.x + 1 == newPoint.x) {
             diff = COL_INC;
         } else if (oldPoint.x - 1 == newPoint.x) {
@@ -938,8 +937,7 @@ static edge pathToEdgeF (path givenPath) {
 
 // takes a char (L, R, B), point, and initial direction and gets
 // the next point
-static point charToPoint (char letter, int difference, point currentPoint) {
-
+static point charToPoint(char letter, int difference, point currentPoint) {
     if (difference == COL_DEC) {
         if (letter == 'L') {
             currentPoint.y++;
@@ -992,18 +990,18 @@ static point charToPoint (char letter, int difference, point currentPoint) {
                 currentPoint.y--;
             }
         }
-    } 
+    }
 
-    if (!validPoint (currentPoint.x, currentPoint.y)) {
+    if (!validPoint(currentPoint.x, currentPoint.y)) {
         currentPoint.x = -1;
     }
     return currentPoint;
 }
 
 // checks a point is on the board
-static int validPoint (int x, int y) {
+static int validPoint(int x, int y) {
     int isValidPoint = TRUE;
-    if (x < 0 || y < 0 
+    if (x < 0 || y < 0
         || x > 5 || y > 10) {
         isValidPoint = FALSE;
     } else if (x - 0 + y - 0 <= 1) {
@@ -1018,9 +1016,9 @@ static int validPoint (int x, int y) {
     return isValidPoint;
 }
 
-static int validRegion (int x, int y) {
+static int validRegion(int x, int y) {
     int isValidRegion = TRUE;
-    if (x < 0 || y < 0 
+    if (x < 0 || y < 0
         || x > 4 || y > 4) {
         isValidRegion = FALSE;
     } else if ((x == 0 || x == 4) && y == 0) {
@@ -1049,19 +1047,19 @@ static point findPointDetails (int x, int y, Game g) {
 
 
 
-static int validString (path destination) {
+static int validString(path destination) {
     int isValidString = TRUE;
     int i = 0;
 
-    while (destination[i] != '\0'){
+    while (destination[i] != '\0') {
         char chr = destination[i];
         if ((chr != 'L') && (chr != 'R') && (chr != 'B')) {
             isValidString = FALSE;
-        } 
+        }
         i++;
     }
 
-    if (i > PATH_LIMIT){
+    if (i > PATH_LIMIT) {
         isValidString = FALSE;
     }
     return isValidString;
@@ -1074,7 +1072,7 @@ assert(validString ("LRRRRRRLLR") == TRUE);
 assert(validString ("LaslkfhaifhaiosR") == FALSE);*/
 
 
-static edge findEdgeDetails (double x, double y, Game g) {
+static edge findEdgeDetails(double x, double y, Game g) {
     edge theEdge;
     theEdge.x = x;
     theEdge.y = y;
@@ -1083,13 +1081,14 @@ static edge findEdgeDetails (double x, double y, Game g) {
     int numEdges = 0;
     int i = 0;
     while (i < NUM_UNIS) {
-        numEdges += getARCs (g, i + 1);
+        numEdges += getARCs(g, i + 1);
         i++;
     }
     i = 0;
     while (i < numEdges) {
-        if (g->gameBoard->edgesUsed[i]->x == x && g->gameBoard->edgesUsed[i]->y == y) {
-            free (theEdge.ARC);
+        if (g->gameBoard->edgesUsed[i]->x == x &&
+            g->gameBoard->edgesUsed[i]->y == y) {
+            free(theEdge.ARC);
             theEdge.ARC = g->gameBoard->edgesUsed[i]->ARC;
         }
         i++;
@@ -1098,7 +1097,7 @@ static edge findEdgeDetails (double x, double y, Game g) {
 }
 
 
-static int validNewEdge (Game g, edge line, int player) {
+static int validNewEdge(Game g, edge line, int player) {
     printf("Entering validNewEdge\n");
     int isValid = FALSE;
     double x = line.x;
@@ -1108,18 +1107,18 @@ static int validNewEdge (Game g, edge line, int player) {
 
     printf("Getting points in validNewEdge\n");
     // Get all possible points
-    if ((x >= 0) && (y>=0)) {
-        points[0] = *(g->gameBoard->points[(int)floor(x)][(int)floor(y)]);
+    if ((x >= 0) && (y >= 0)) {
+        points[0] = * (g->gameBoard->points[(int)floor(x)][(int)floor(y)]);
         printf("Obtained a point\n");
         points[1] = *(g->gameBoard->points[(int)ceil(x)][(int)floor(y)]);
         points[2] = *(g->gameBoard->points[(int)floor(x)][(int)ceil(y)]);
         points[3] = *(g->gameBoard->points[(int)ceil(x)][(int)ceil(y)]);
-        printf("Obtained new points in validNewEdge\n");     
+        printf("Obtained new points in validNewEdge\n");
 
         printf("About to enter while loop in validNewEdge\n");
         while (i < 4) {
             printf("In point while loop\n");
-            if ((points[i].contents != 0) && (points[i].contents % NUM_UNIS == 
+            if ((points[i].contents != 0) && (points[i].contents % NUM_UNIS ==
                 player % NUM_UNIS)) {
                 isValid = TRUE;
             }
@@ -1127,11 +1126,11 @@ static int validNewEdge (Game g, edge line, int player) {
         }
 
         // Check it's not already occupied
-        line = findEdgeDetails (x, y, g);
+        line = findEdgeDetails(x, y, g);
         if (line.ARC->uniID != VACANT_ARC) {
             isValid = FALSE;
         } else {
-            free (line.ARC);
+            free(line.ARC);
         }
 
         // Check if any of the surrounding edges are owned by the player
@@ -1139,37 +1138,37 @@ static int validNewEdge (Game g, edge line, int player) {
         double x2 = 0.5;
         double y1 = 1;
         double y2 = 0.5;
-        if (floor (y) == y) {
+        if (floor(y) == y) {
             x1 = 0.5;
             y1 = -0.5;
         }
-        edge adjacentEdge = findEdgeDetails (line.x + x1, 
+        edge adjacentEdge = findEdgeDetails(line.x + x1,
             line.y + y1, g);
         if (adjacentEdge.ARC->uniID == player) {
             isValid = TRUE;
         } else if (adjacentEdge.ARC->uniID == VACANT_ARC) {
-            free (adjacentEdge.ARC);
+            free(adjacentEdge.ARC);
         }
-        adjacentEdge = findEdgeDetails (line.x - x1, 
+        adjacentEdge = findEdgeDetails(line.x - x1,
             line.y - y1, g);
         if (adjacentEdge.ARC->uniID == player) {
             isValid = TRUE;
         } else if (adjacentEdge.ARC->uniID == VACANT_ARC) {
-            free (adjacentEdge.ARC);
+            free(adjacentEdge.ARC);
         }
-        adjacentEdge = findEdgeDetails (line.x + x2, 
+        adjacentEdge = findEdgeDetails(line.x + x2,
             line.y + y2, g);
         if (adjacentEdge.ARC->uniID == player) {
             isValid = TRUE;
         } else if (adjacentEdge.ARC->uniID == VACANT_ARC) {
-            free (adjacentEdge.ARC);
+            free(adjacentEdge.ARC);
         }
-        adjacentEdge = findEdgeDetails (line.x - x2, 
+        adjacentEdge = findEdgeDetails(line.x - x2,
             line.y - y2, g);
         if (adjacentEdge.ARC->uniID == player) {
             isValid = TRUE;
         } else if (adjacentEdge.ARC->uniID == VACANT_ARC) {
-            free (adjacentEdge.ARC);
+            free(adjacentEdge.ARC);
         }
         printf("Exiting validNewEdge\n");
     } else {
@@ -1179,21 +1178,21 @@ static int validNewEdge (Game g, edge line, int player) {
 }
 
 // Check a campus can go there
-static int validNewContents (Game g, path destination, int player) {
+static int validNewContents(Game g, path destination, int player) {
     int i = 0;
-    //double x = 0;
-    //double y = 0;
+    // double x = 0;
+    // double y = 0;
     int isValid = FALSE;
-    point newPoint = pathToPoint (destination);
-    assert (newPoint.x >= 0);
-    //point points[POSSIBLE_POINTS];
+    point newPoint = pathToPoint(destination);
+    assert(newPoint.x >= 0);
+    // point points[POSSIBLE_POINTS];
     int adjacent = 0;
 
-    long pathLength = strlen (destination);
+    long pathLength = strlen(destination);
     path adj[3];
-    strcpy (adj[0], destination);
-    strcpy (adj[1], destination);
-    strcpy (adj[2], destination);
+    strcpy(adj[0], destination);
+    strcpy(adj[1], destination);
+    strcpy(adj[2], destination);
     adj[0][pathLength] = 'L';
     adj[0][pathLength + 1] = '\0';
     adj[1][pathLength] = 'R';
@@ -1201,20 +1200,20 @@ static int validNewContents (Game g, path destination, int player) {
     adj[2][pathLength] = 'B';
     adj[2][pathLength + 1] = '\0';
     while (i < 3) {
-        point aPoint = pathToPoint (adj[i]);
+        point aPoint = pathToPoint(adj[i]);
         if (aPoint.x >= 0) {
             if (g->gameBoard->points[aPoint.x][aPoint.y]->contents != 0) {
                 adjacent++;
                 isValid = FALSE;
             }
         }
-        edge anEdge = pathToEdgeF (adj[i]);
-        anEdge = findEdgeDetails (anEdge.x, anEdge.y, g);
+        edge anEdge = pathToEdgeF(adj[i]);
+        anEdge = findEdgeDetails(anEdge.x, anEdge.y, g);
         if (anEdge.ARC->uniID == player && adjacent == 0) {
             isValid = TRUE;
         }
         if (anEdge.ARC->uniID == VACANT_ARC) {
-            free (anEdge.ARC);
+            free(anEdge.ARC);
         }
         i++;
     }
@@ -1222,21 +1221,21 @@ static int validNewContents (Game g, path destination, int player) {
     return  isValid;
 }
 
-static int getTotalEdges (Game g) {
+static int getTotalEdges(Game g) {
     int numEdges = 0;
     int i = 0;
     while (i < NUM_UNIS) {
-        numEdges += getARCs (g, i + 1);
+        numEdges += getARCs(g, i + 1);
         i++;
     }
     return numEdges;
 }
 
-static int getTotalGO8s (Game g) {
+static int getTotalGO8s(Game g) {
     int numGO8s = 0;
     int i = 0;
     while (i < NUM_UNIS) {
-        numGO8s += getGO8s (g, i + 1);
+        numGO8s += getGO8s(g, i + 1);
         i++;
     }
     return numGO8s;
