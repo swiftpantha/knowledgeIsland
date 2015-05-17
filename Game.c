@@ -1166,7 +1166,9 @@ static int validNewEdge(Game g, edge line, int player) {
         if (floor(y) == y) {
             x1 = 0.5;
             y1 = -0.5;
-        }
+        } else if (((int)floor (y))%2 == 0 != ((int)(x))%2 == 1) {
+            x2 = -0.5;
+        } 
         edge adjacentEdge = findEdgeDetails(line.x + x1,
             line.y + y1, g);
         if (adjacentEdge.ARC->uniID == player) {
