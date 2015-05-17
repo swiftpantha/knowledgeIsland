@@ -1108,7 +1108,7 @@ void testIsLegalAction (void) {
     int disciplines[] = DEFAULT_DISCIPLINES;
     int dice[] = DEFAULT_DICE;
     int player = 0;
-    printf("Standard setup game. Step by step actions...\n");
+    printf("> Standard setup game. Step by step actions...\n");
     Game testGame = newGame(disciplines, dice);
     // create a test action
     action testAction;
@@ -1119,8 +1119,8 @@ void testIsLegalAction (void) {
     
     /* Step by step giving resources, checking if he can do the action etc. emulating the game */
     
-    // Step 1. Give resources to player 1
-    printf("Giving player 1 resources on 6 and 11\n");
+    // Give resources to player 1
+    printf("> Giving player 1 resources on 6 and 11\n");
     throwDice(testGame, 6); // this gives 1 MJ and the turn to player 1
     throwDice(testGame, 6); // this gives 1 MJ -- player 2
     throwDice(testGame, 6); // this gives 1 MJ -- player 3
@@ -1130,39 +1130,37 @@ void testIsLegalAction (void) {
     throwDice(testGame, 11); // this gives 1 MTV -- player 1
     
     // is it the turn of player 1?
-    printf("Is it the turn of player 1?\n");
+    printf("> Is it the turn of player 1?\n");
     player = getWhoseTurn(testGame);
     assert(player == 1);
     
     // getKPIpoints - should have 36 now
-    printf("Starting points = 20. To make sure gameplay is working fine.\n");
+    printf("> Starting points = 20. To make sure gameplay is working fine.\n");
     assert(getKPIpoints(testGame, 1) == 20); // that's what it should be
     
     
-    printf("Campus with no ARC test\n");
+    printf("> Campus with no ARC test\n");
     // Player 1 has: 3 x BPS, 3 x B?, 5 x MTV, 4 x MJ, 1 x M$
     // check that he can't build a CAMPUS
     testAction.actionCode = BUILD_CAMPUS;
     strcpy(testAction.destination, "R"); // intersection between MMONEY and MTV
     assert(isLegalAction(testGame, testAction) == FALSE); // can't build there since no ARC
-    printScore(testGame, 1);
 
-    printf("Building ARCs\n");
+    printf("> Building ARCs\n");
     // but can build an ARC!
     testAction.actionCode = OBTAIN_ARC;
     strcpy(testAction.destination, "R"); // intersection between MMONEY and MTV
     assert(isLegalAction(testGame, testAction) == TRUE); // can build the ARC
-    printScore(testGame, 1);
     makeAction(testGame, testAction); // build
     printScore(testGame, 1);
-    assert(getKPIpoints(testGame, 1) == 22); // that's what it should be
+    assert(getKPIpoints(testGame, 1) == 32); // that's what it should be - WE GET THE MOST ARCs BONUS
     // Player 1 has: 2 x BPS, 2 x B?, 5 x MTV, 4 x MJ, 1 x M$
-    printf("Campus on the same edge test\n");
+    printf("> Campus on the same edge test\n");
     // check that he still can't build a CAMPUS
     testAction.actionCode = BUILD_CAMPUS;
     strcpy(testAction.destination, "R"); // intersection between MMONEY and MTV
     assert(isLegalAction(testGame, testAction) == FALSE); // can't build because on the same edge
-    printf("Two more valid ARCs\n");
+    printf("> Two more valid ARCs\n");
     // two more ARCs
     testAction.actionCode = OBTAIN_ARC;
     strcpy(testAction.destination, "RL"); // intersection between MMONEY, MTV, BPS
@@ -1173,7 +1171,7 @@ void testIsLegalAction (void) {
     strcpy(testAction.destination, "RLL"); // intersection between MTV, BPS, BQN
     assert(isLegalAction(testGame, testAction) == TRUE); // can build the ARC
     makeAction(testGame, testAction); // build
-    printf("No more resources for ARCs - test\n");
+    printf("> No more resources for ARCs - test\n");
     // Player 1 has: 0 x BPS, 0 x B?, 5 x MTV, 4 x MJ, 1 x M$
     // shouldn't be able to build an ARC - no resources
     testAction.actionCode = OBTAIN_ARC;
@@ -1181,20 +1179,20 @@ void testIsLegalAction (void) {
     assert(isLegalAction(testGame, testAction) == FALSE); // can't build the ARC
 
     // getKPIpoints - should have 36 now
-    printf("Built 3 ARCs - 26 points total\n");
-    assert(getKPIpoints(testGame, 1) == 26); // that's what it should be
+    printf("> Built 3 ARCs - 36 points total counting for Most ARCs Bonus\n");
+    assert(getKPIpoints(testGame, 1) == 36); // that's what it should be
 
 
     // Player 1 has: 0 x BPS, 0 x B?, 5 x MTV, 4 x MJ, 1 x M$
     // retrain some students    
-    printf("Can't retrain from M$ - not enough\n");
+    printf("> Can't retrain from M$ - not enough\n");
     // can't retrain from M$ - not enough of them
     testAction.actionCode = RETRAIN_STUDENTS;
     testAction.disciplineFrom = STUDENT_MMONEY;
     testAction.disciplineTo = STUDENT_BPS;
     assert(isLegalAction(testGame, testAction) == FALSE);
     
-    printf("Can retrain from MTV to BPS\n");
+    printf("> Can retrain from MTV to BPS\n");
     // now can retrain from MTV to BPS
     testAction.actionCode = RETRAIN_STUDENTS;
     testAction.disciplineFrom = STUDENT_MTV;
@@ -1203,7 +1201,7 @@ void testIsLegalAction (void) {
     makeAction(testGame, testAction); // retrain
     // Player 1 has: 1 x BPS, 0 x B?, 2 x MTV, 4 x MJ, 1 x M$
         
-    printf("Can retrain from MJ to BQN\n");
+    printf("> Can retrain from MJ to BQN\n");
     // can retrain from MJ to BQN
     testAction.actionCode = RETRAIN_STUDENTS;
     testAction.disciplineFrom = STUDENT_MJ;
@@ -1212,7 +1210,7 @@ void testIsLegalAction (void) {
     makeAction(testGame, testAction); // retrain
     // Player 1 has: 1 x BPS, 1 x B?, 2 x MTV, 1 x MJ, 1 x M$
     
-    printf("Can build campus\n");
+    printf("> Can build campus\n");
     // Now it should be possible to build a campus
     testAction.actionCode = BUILD_CAMPUS;
     strcpy(testAction.destination, "RLL"); // intersection between MTV, BPS, BQN
@@ -1224,14 +1222,14 @@ void testIsLegalAction (void) {
     // to check if the point increasing works correctly
 
     // getKPIpoints - should have 36 now
-    printf("Built 3 ARCs and Campus - 36 points total\n");
-    assert(getKPIpoints(testGame, 1) == 36); // that's what it should be
+    printf("> Built a Campus - 46 points total\n");
+    assert(getKPIpoints(testGame, 1) == 46); // that's what it should be
     
 
     // more resources on 3,4,11
-    throwDice(testGame, 11); // this gives 1 MTV to player 1 -- turn to player 2
-    throwDice(testGame, 11); // this gives 1 MTV to player 1 -- turn to player 3
-    throwDice(testGame, 11); // this gives 1 MTV to player 1 -- turn to player 1
+    throwDice(testGame, 11); // this gives 2 MTV to player 1 -- turn to player 2
+    throwDice(testGame, 11); // this gives 2 MTV to player 1 -- turn to player 3
+    throwDice(testGame, 11); // this gives 2 MTV to player 1 -- turn to player 1
     throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 2
     throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 3
     throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 1
@@ -1244,8 +1242,11 @@ void testIsLegalAction (void) {
     throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 2
     throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 3
     throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 1
+
+    // LATER: check that 2 campuses indeed give 2 MTV!
     
-    // Player 1 has: 6 x BPS, 6 x B?, 4 x MTV, 0 x MJ, 1 x M$
+    
+    // Player 1 has: 6 x BPS, 6 x B?, 7 x MTV, 0 x MJ, 1 x M$
     // let's build GO8 on this same spot and check that it gives 10 KPIs only (as per spec - we're losing normal one)
     // at the same time check if isLegal works for GO8
     // now shouldn't be able to build - not enough resources
@@ -1272,47 +1273,36 @@ void testIsLegalAction (void) {
     testAction.disciplineTo = STUDENT_MJ;
     assert(isLegalAction(testGame, testAction) == TRUE);
     makeAction(testGame, testAction); // retrain
-    // Player 1 has: 0 x BPS, 0 x B?, 4 x MTV, 2 x MJ, 3 x M$
+    // Player 1 has: 0 x BPS, 0 x B?, 7 x MTV, 2 x MJ, 3 x M$
     // now should be able to build
     testAction.actionCode = BUILD_GO8;
     strcpy(testAction.destination, "RLL"); // intersection between MTV, BPS, BQN
     assert(isLegalAction (testGame, testAction) == TRUE); // can build
     makeAction(testGame, testAction); // build
-    printf("GO8 rebuilt on campus should give 10 points only\n");
+    printf("> GO8 rebuilt on campus should give 10 points only\n");
     // check KPI points!
-    assert(getKPIpoints(testGame, 1) == 46); // that's what it should be
-    // Player 1 has: 0 x BPS, 0 x B?, 4 x MTV, 0 x MJ, 0 x M$
+    assert(getKPIpoints(testGame, 1) == 56); // that's what it should be
+    // Player 1 has: 0 x BPS, 0 x B?, 7 x MTV, 0 x MJ, 0 x M$
     
   
     // now build another G08 in a new place to check that it gives 20 points
 
-    throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 2
-    throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 3
-    throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 1
-    throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 2
-    throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 3
-    throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 1
-    throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 2
-    throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 3
-    throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 1
-    throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 2
-    throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 3
-    throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 1
-    throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 2
-    throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 3
-    throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 1
-    throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 2
-    throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 3
-    throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 1
-    throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 2
-    throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 3
-    throwDice(testGame, 3); // this gives 1 BPS to player 1 -- turn to player 1
-    throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 2
-    throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 3
-    throwDice(testGame, 4); // this gives 1 BQN to player 1 -- turn to player 1
-    // Player 1 has: 12 x BPS, 12 x B?, 4 x MTV, 0 x MJ, 0 x M$
+    throwDice(testGame, 3); // this gives 2 BPS to player 1 -- turn to player 2
+    throwDice(testGame, 3); // this gives 2 BPS to player 1 -- turn to player 3
+    throwDice(testGame, 3); // this gives 2 BPS to player 1 -- turn to player 1
+    throwDice(testGame, 4); // this gives 2 BQN to player 1 -- turn to player 2
+    throwDice(testGame, 4); // this gives 2 BQN to player 1 -- turn to player 3
+    throwDice(testGame, 4); // this gives 2 BQN to player 1 -- turn to player 1
+    throwDice(testGame, 3); // this gives 2 BPS to player 1 -- turn to player 2
+    throwDice(testGame, 3); // this gives 2 BPS to player 1 -- turn to player 3
+    throwDice(testGame, 3); // this gives 2 BPS to player 1 -- turn to player 1
+    throwDice(testGame, 4); // this gives 2 BQN to player 1 -- turn to player 2
+    throwDice(testGame, 4); // this gives 2 BQN to player 1 -- turn to player 3
+    throwDice(testGame, 4); // this gives 2 BQN to player 1 -- turn to player 1
+    // Player 1 has: 12 x BPS, 12 x B?, 7 x MTV, 0 x MJ, 0 x M$
 
-    // retrain to get 3 M$ and 2 MJ
+    printScore(testGame, 1);
+    // retrain to get 3 M$ and 3 MJ
     testAction.actionCode = RETRAIN_STUDENTS;
     testAction.disciplineFrom = STUDENT_BPS;
     testAction.disciplineTo = STUDENT_MMONEY;
@@ -1337,31 +1327,55 @@ void testIsLegalAction (void) {
     testAction.disciplineTo = STUDENT_MJ;
     assert(isLegalAction(testGame, testAction) == TRUE);
     makeAction(testGame, testAction); // retrain
-    // Player 1 has: 3 x BPS, 6 x B?, 4 x MTV, 2 x MJ, 3 x M$
+    testAction.disciplineFrom = STUDENT_BQN;
+    testAction.disciplineTo = STUDENT_MJ;
+    assert(isLegalAction(testGame, testAction) == TRUE);
+    makeAction(testGame, testAction); // retrain
+    printScore(testGame, 1);
+    // Player 1 has: 3 x BPS, 3 x B?, 7 x MTV, 3 x MJ, 3 x M$
 
     // test building GO8 without an ARC
-    printf("GO8 without an ARC\n");
+    printf("> GO8 without an ARC\n");
     testAction.actionCode = BUILD_GO8;
     strcpy(testAction.destination, "RR"); // edge on MMONEY and near MTV retraining centre
     assert(isLegalAction (testGame, testAction) == FALSE); // can't build - no ARC
 
-    printf("ARC into the sea\n");
+    printf("> ARC into the sea\n");
     testAction.actionCode = OBTAIN_ARC;
     // off limit ARC check
     strcpy(testAction.destination, "RRR"); // in the sea
     assert(isLegalAction (testGame, testAction) == FALSE); // shouldn't be able to
+    printf("> Valid ARC for GO8\n");
     // normal ARC to proceed with tests
     strcpy(testAction.destination, "RR"); // edge on MMONEY and near MTV retraining centre
     assert(isLegalAction (testGame, testAction) == TRUE); // should be able to
     makeAction(testGame, testAction); // build
-    // Player 1 has: 2 x BPS, 5 x B?, 4 x MTV, 2 x MJ, 3 x M$
-    printf("GO8 with an ARC\n");
+    // Player 1 has: 2 x BPS, 2 x B?, 7 x MTV, 3 x MJ, 3 x M$
+    printf("> GO8 with an ARC but without a normal campus\n");
     testAction.actionCode = BUILD_GO8;
     strcpy(testAction.destination, "RR"); // edge on MMONEY and near MTV retraining centre
-    assert(isLegalAction (testGame, testAction) == FALSE); // can't build - no ARC
+    assert(isLegalAction (testGame, testAction) == FALSE); // can't build - no normal campus yet
+
+    printf("> Build a normal campus first\n");
+    testAction.actionCode = BUILD_CAMPUS;
+    strcpy(testAction.destination, "RR"); // edge on MMONEY and near MTV retraining centre
+    assert(isLegalAction (testGame, testAction) == TRUE); // can build
+    makeAction(testGame, testAction); // build
     
-    printf("New GO8 should give 20 points\n");
-    assert(getKPIpoints(testGame, 1) == 68); // that's what it should be (1xARC + 1xG08)
+    // Player 1 has: 1 x BPS, 1 x B?, 6 x MTV, 2 x MJ, 3 x M$
+
+    printf("> And build GO8 now with all things valid\n");
+    testAction.actionCode = BUILD_GO8;
+    strcpy(testAction.destination, "RR"); // edge on MMONEY and near MTV retraining centre
+    assert(isLegalAction (testGame, testAction) == TRUE); // can build
+    makeAction(testGame, testAction); // build
+
+    // Player 1 has: 1 x BPS, 1 x B?, 6 x MTV, 0 x MJ, 0 x M$
+
+    
+    printf("> New GO8 should give 20 points\n");
+    printScore(testGame, 1);
+    assert(getKPIpoints(testGame, 1) == 78); // that's what it should be (1xARC + 1xG08)
     
     // TO DO:
     // building arcs adjacent / crossing other people's arcs
@@ -1371,43 +1385,117 @@ void testIsLegalAction (void) {
     // spinoff with no enough resources
     // no more than 8 GO8s can exist in the game
     
+    // Player 1 has: 1 x BPS, 1 x B?, 6 x MTV, 0 x MJ, 0 x M$
     
-    
-    
-
     /* Special checks */
-    // get THDs
-    throwDice(testGame, 11); // this gives 2 MTV to player 1 -- turn to player 2
-    throwDice(testGame, 11); // this gives 2 MTV to player 1 -- turn to player 3
-    throwDice(testGame, 11); // this gives 2 MTV to player 1 -- turn to player 1
-    // LATER: check that you indeed get 2 per each (using retraining centre)
 
-    throwDice(testGame, 12); // this gives 1 M$ to player 1 -- turn to player 2
-    throwDice(testGame, 12); // this gives 1 M$ to player 1 -- turn to player 3
-    throwDice(testGame, 12); // this gives 1 M$ to player 1 -- turn to player 1
+    printf("> Turn MTVs and M$s into THDs on Score 7\n");
+    // get resources
+    throwDice(testGame, 11); // this gives 3 MTV to player 1 -- turn to player 2
+    throwDice(testGame, 11); // this gives 3 MTV to player 1 -- turn to player 3
+    throwDice(testGame, 11); // this gives 3 MTV to player 1 -- turn to player 1
+
+    // Player 1 has: 1 x BPS, 1 x B?, 15 x MTV, 0 x MJ, 0 x M$
+
+    throwDice(testGame, 12); // this gives 2 M$ to player 1 -- turn to player 2
+    throwDice(testGame, 12); // this gives 2 M$ to player 1 -- turn to player 3
+    throwDice(testGame, 12); // this gives 2 M$ to player 1 -- turn to player 1
+
+    // Player 1 has: 1 x BPS, 1 x B?, 15 x MTV, 0 x MJ, 6 x M$
+    printScore(testGame, 1);
 
     throwDice(testGame, 7); // MTV/M$ -> THD and the turn to player 2
     throwDice(testGame, 7); // MTV/M$ -> THD --- player 3
     throwDice(testGame, 7); // MTV/M$ -> THD --- player 1
-    // LATER: check how many you actually got now
-    // should be 
 
-    printf("Can't retrain from THDs");
+    // LATER: check how many you actually got now - should be 21 THDs
+    printScore(testGame, 1);
+    
+
+    printf("> Can't retrain from THDs\n");
     // check that we can't retrain from THDs
     testAction.actionCode = RETRAIN_STUDENTS;
     testAction.disciplineFrom = STUDENT_THD;
     testAction.disciplineTo = STUDENT_BPS;
     assert(isLegalAction(testGame, testAction) == FALSE);
     
+    // Player 1 has: THD: 21 BPS: 1 BQN: 1 MJ: 0 MTV: 0 M$: 0
+
+    // SPIN OFF
+    // START_SPINOFF can't be done in makeAction it's turned into OBTAIN_PUBLICATION/OBTAIN_IP_PATENT
+    // within the runGame of CSE using random
+    // but START_SPINOFF should be a valid action in isLegalAction
+    // however OBTAIN_IP_PATENT and OBTAIN_PUBLICATION should be invalid
+    testAction.actionCode = START_SPINOFF;
+    assert (isLegalAction (testGame, testAction) == FALSE); // not enough resources
+
+    // give resources
+    throwDice(testGame, 11); // this gives 3 MTV to player 1 -- turn to player 2
+    throwDice(testGame, 11); // this gives 3 MTV to player 1 -- turn to player 3
+    throwDice(testGame, 11); // this gives 3 MTV to player 1 -- turn to player 1
+    // Player 1 has: THD: 21 BPS: 1 BQN: 1 MJ: 0 MTV: 9 M$: 0
+
+    throwDice(testGame, 12); // this gives 2 M$ to player 1 -- turn to player 2
+    throwDice(testGame, 12); // this gives 2 M$ to player 1 -- turn to player 3
+    throwDice(testGame, 12); // this gives 2 M$ to player 1 -- turn to player 1
+    // Player 1 has: THD: 21 BPS: 1 BQN: 1 MJ: 0 MTV: 9 M$: 6
+
+    // retrain for MJ from MTV (2 for 1 as we have the retraining centre!)
+    testAction.actionCode = RETRAIN_STUDENTS;
+    testAction.disciplineFrom = STUDENT_MTV;
+    testAction.disciplineTo = STUDENT_MJ;
+    assert(isLegalAction(testGame, testAction) == TRUE);
+    makeAction(testGame, testAction); // retrain
+    makeAction(testGame, testAction); // retrain
+    // Player 1 has: THD: 21 BPS: 1 BQN: 1 MJ: 2 MTV: 5 M$: 6
+
+    // LATER: check that retraining centre works and we indeed get 2 for 1
     
-/*    
+    testAction.actionCode = START_SPINOFF;
+    assert (isLegalAction (testGame, testAction) == TRUE); // enough resources
+    
+    testAction.actionCode = OBTAIN_PUBLICATION;
+    assert (isLegalAction (testGame, testAction) == FALSE);
+    testAction.actionCode = OBTAIN_IP_PATENT;
+    assert (isLegalAction (testGame, testAction) == FALSE);
+    
+    throwDice(testGame, 3); // this gives 2 BPS to player 1 -- turn to player 2
+    throwDice(testGame, 3); // this gives 2 BPS to player 1 -- turn to player 3
+    throwDice(testGame, 3); // this gives 2 BPS to player 1 -- turn to player 1
+    throwDice(testGame, 4); // this gives 2 BQN to player 1 -- turn to player 2
+    throwDice(testGame, 4); // this gives 2 BQN to player 1 -- turn to player 3
+    throwDice(testGame, 4); // this gives 2 BQN to player 1 -- turn to player 1
+    throwDice(testGame, 3); // this gives 2 BPS to player 1 -- turn to player 2
+    throwDice(testGame, 3); // this gives 2 BPS to player 1 -- turn to player 3
+    throwDice(testGame, 3); // this gives 2 BPS to player 1 -- turn to player 1
+    throwDice(testGame, 4); // this gives 2 BQN to player 1 -- turn to player 2
+    throwDice(testGame, 4); // this gives 2 BQN to player 1 -- turn to player 3
+    throwDice(testGame, 4); // this gives 2 BQN to player 1 -- turn to player 1
+    
+    // Player 1 has: THD: 21 BPS: 13 BQN: 13 MJ: 0 MTV: 0 M$: 0
+    
+    // Can build many ARCs, so check weird paths
+    // PATHs checks
+    printf("> Testing paths... \n");
+    testAction.actionCode = OBTAIN_ARC;
+    // in the sea
+    strcpy (testAction.destination, "LL");
+    assert (isLegalAction (testGame, testAction) == FALSE);
+    // invalid character path
+    strcpy (testAction.destination, "LXX");
+    assert (isLegalAction (testGame, testAction) == FALSE);
+    // path too long
+    strcpy (testAction.destination, "LLLLLLLLLLLLLLLLRRRRRRRRRRRRRRLL");
+    assert (isLegalAction (testGame, testAction) == FALSE);
     
     
+    /*    
     
+    OUTDATED TESTS
     
-    
-    
-    
+    |
+    |
+    V
     
     // do a bunch of throw dice to give resources
     int turn = 0;
