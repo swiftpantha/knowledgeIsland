@@ -436,7 +436,9 @@ static void buildARC(Game g, action a) {
     g->players[player - 1]->students[STUDENT_BPS]--;
     g->players[player - 1]->students[STUDENT_BQN]--;
     // Give 'em a couple of points for a road
+    printf("KPI: %d \n", getKPIpoints(g, player));
     g->players[player - 1]->KPIs = g->players[player - 1]->KPIs + 2;
+    printf("new KPI: %d \n", getKPIpoints(g, player));
 
     if (g->players[player - 1]->ARCGrants  > g->mostARCs->ARCGrants) {
         if (g->mostARCs->ARCGrants == 0) {
