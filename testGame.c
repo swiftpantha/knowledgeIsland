@@ -61,11 +61,11 @@ void printScore (Game g, int player);
 
 int main (int argc, char *argv[]) {
     
-    /*testDisposeGame ();
+    testDisposeGame ();
     testGetDiscipline ();
-    testGetTurnNumber ();*/
+    testGetTurnNumber ();
     testIsLegalAction ();
-    /*testGetCampuses ();
+    testGetCampuses ();
     testMakeAction ();
     testGetMostARCs ();
     testGetCampus ();
@@ -85,7 +85,7 @@ int main (int argc, char *argv[]) {
     failedExternalTestSimon ();
     failedExternalTestMeghana();
     failedExternalTests ();
-    externalTest002();*/
+    externalTest002();
     printf ("All tests passed. You are awesome!\n");
 
     return EXIT_SUCCESS;
