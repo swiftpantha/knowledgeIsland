@@ -9,6 +9,7 @@ Get out of your comfort zone now and you'll be glad you did in a year or sooner.
 # If you don't have git on your computer
 First check. In terminal:
 > git --version
+
 Should give: git version 1.9.3 (Apple Git-50) or something
 If it says unknown command - you don't have git.
 
@@ -23,6 +24,7 @@ To clone this repo go to terminal and navigate to where you want
 to put it by using 
 
 > cd ./Documents/University.... 
+
 (to whatever folder you normally put your work in)
 Note: Don't cd to the Dropbox folder!
 
@@ -37,6 +39,7 @@ However when installing git you have got your key (I did), try and locate it.
 
 Go to your user home folder, then open
 > pico .ssh/github_rsa.pub
+
 (you can use vim/gedit or whatever text editor you use)
 Does the file exist?
 If not, refer to this guide on how to create an SSH key for git OR ask Moss or Anton
@@ -44,7 +47,9 @@ https://help.github.com/articles/generating-ssh-keys/
 
 Now that you have the SSH key, do the following commands:
 > eval "$(ssh-agent -s)"
+
 > ssh-add ~/.ssh/github_rsa
+
 The last one may promt for a password. You've created it with your SSH key. 
 If you don't know it, use Spotlight to open Keychain Access
 Search for "ssh" or "github" and then right click and choose "copy password to clipboard". 
@@ -72,6 +77,7 @@ always only have perfect working code.
 
 You can see the status:
 > git status
+
 And see the log of changes:
 > git log
 
@@ -92,9 +98,11 @@ That'll tell me which files I ended up changing. Now we want to tell git
 to add those changes. This is done with:
 
 > git add -A 
+
 to add all files changed
 OR:
 > git add [filename]
+
 where [filename] is the file you want to add out of those you've changed
 
 Usually you'd use -A version
@@ -104,6 +112,7 @@ We do this by commiting the changes. Every commit must include a message about
 the changes you made. This is done with:
 
 > git commit -m "Made changes to the testGame.c to include the failed test"
+
 (obviously replace the message in the quotes with an appropriate msg)
 
 Awesome, now we've commited that change we want to push it we can do that with:
