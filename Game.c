@@ -1151,12 +1151,6 @@ static int validNewEdge(Game g, edge line, int player) {
 
         // Check it's not already occupied
         line = findEdgeDetails(x, y, g);
-        if (line.ARC->uniID != VACANT_ARC) {
-            isValid = FALSE;
-        } else {
-            free(line.ARC);
-        }
-
         // Check if any of the surrounding edges are owned by the player
         double x1 = 0;
         double x2 = 0.5;
@@ -1165,7 +1159,7 @@ static int validNewEdge(Game g, edge line, int player) {
         if (floor(y) == y) {
             x1 = 0.5;
             y1 = -0.5;
-        } else if (((int)floor (y))%2 == 0 != ((int)(x))%2 == 1) {
+        } else if (((int)floor (y))%2 == ((int)(x))%2) {
             x2 = -0.5;
         } 
         edge adjacentEdge = findEdgeDetails(line.x + x1,
@@ -1199,6 +1193,11 @@ static int validNewEdge(Game g, edge line, int player) {
         printf("Exiting validNewEdge\n");
     } else {
         isValid = FALSE;
+    }
+    if (line.ARC->uniID != VACANT_ARC) {
+        isValid = FALSE;
+    } else {
+        free(line.ARC);
     }
     return isValid;
 }
@@ -1242,6 +1241,9 @@ static int validNewContents(Game g, path destination, int player) {
             free(anEdge.ARC);
         }
         i++;
+    }
+    if (getCampus(g, destination) != 0) {
+        isValid = FALSE;
     }
 
     return  isValid;
