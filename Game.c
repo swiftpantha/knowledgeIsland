@@ -837,42 +837,42 @@ int getExchangeRate(Game g, int player,
     int ratio = 3;
     if (disciplineFrom == STUDENT_MMONEY) {
         if (g->gameBoard->points[3][1]->contents == player
-            || g->gameBoard->points[3][1]->contents == player - NUM_UNIS) {
+            || g->gameBoard->points[3][1]->contents == player + NUM_UNIS) {
             ratio = 2;
         } else if (g->gameBoard->points[4][1]->contents == player
-            || g->gameBoard->points[4][1]->contents == player - NUM_UNIS) {
+            || g->gameBoard->points[4][1]->contents == player + NUM_UNIS) {
             ratio = 2;
         }
     } else if (disciplineFrom == STUDENT_BQN) {
         if (g->gameBoard->points[5][5]->contents == player
-            || g->gameBoard->points[5][5]->contents == player - NUM_UNIS) {
+            || g->gameBoard->points[5][5]->contents == player + NUM_UNIS) {
             ratio = 2;
         } else if (g->gameBoard->points[5][6]->contents == player
-            || g->gameBoard->points[5][6]->contents == player - NUM_UNIS) {
+            || g->gameBoard->points[5][6]->contents == player + NUM_UNIS) {
             ratio = 2;
         }
     } else if (disciplineFrom == STUDENT_MJ) {
         if (g->gameBoard->points[4][8]->contents == player
-            || g->gameBoard->points[4][8]->contents == player - NUM_UNIS) {
+            || g->gameBoard->points[4][8]->contents == player + NUM_UNIS) {
             ratio = 2;
         } else if (g->gameBoard->points[4][9]->contents == player
-            || g->gameBoard->points[4][9]->contents == player - NUM_UNIS) {
+            || g->gameBoard->points[4][9]->contents == player + NUM_UNIS) {
             ratio = 2;
         }
     } else if (disciplineFrom == STUDENT_BPS) {
         if (g->gameBoard->points[1][8]->contents == player
-            || g->gameBoard->points[1][8]->contents == player - NUM_UNIS) {
+            || g->gameBoard->points[1][8]->contents == player + NUM_UNIS) {
             ratio = 2;
         } else if (g->gameBoard->points[1][9]->contents == player
-            || g->gameBoard->points[1][9]->contents == player - NUM_UNIS) {
+            || g->gameBoard->points[1][9]->contents == player + NUM_UNIS) {
             ratio = 2;
         }
     } else if (disciplineFrom == STUDENT_MTV) {
         if (g->gameBoard->points[1][1]->contents == player
-            || g->gameBoard->points[1][1]->contents == player - NUM_UNIS) {
+            || g->gameBoard->points[1][1]->contents == player + NUM_UNIS) {
             ratio = 2;
         } else if (g->gameBoard->points[2][1]->contents == player
-            || g->gameBoard->points[2][1]->contents == player - NUM_UNIS) {
+            || g->gameBoard->points[2][1]->contents == player + NUM_UNIS) {
             ratio = 2;
         }
     }
