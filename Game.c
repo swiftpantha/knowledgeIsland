@@ -723,7 +723,7 @@ int isLegalAction(Game g, action a) {
 
         // Check that someone can get an arc
         if (a.actionCode == OBTAIN_ARC && isLegal) {
-            printf("Checking if the arc is legal\n");
+            printf("Checking if the arc is legal. Arc:%s\n", a.destination);
             if (validNewEdge(g, pathToEdgeF(a.destination), player) == FALSE) {
                 printf("Geographically Valid Edge\n");
                 isLegal = FALSE;
@@ -834,6 +834,7 @@ int getStudents(Game g, int player, int discipline) {
 // on what retraining centers, if any, they have a campus at->
 int getExchangeRate(Game g, int player,
                      int disciplineFrom, int disciplineTo) {
+    printf("in getExchange rate\n");
     int ratio = 3;
     if (disciplineFrom == STUDENT_MMONEY) {
         if (g->gameBoard->points[3][1]->contents == player
@@ -876,6 +877,7 @@ int getExchangeRate(Game g, int player,
             ratio = 2;
         }
     }
+    printf("end of getExchange rate\n");
     return ratio;
 }
 
@@ -953,6 +955,13 @@ static edge pathToEdgeF(path givenPath) {
     } else if (diff == ROW_DEC) {
         newEdge.x = newPoint.x;
         newEdge.y = newPoint.y + 0.5;
+    }
+    else { // got just "\0" in the string
+    // this will never be reached because START_DIFF = ROW_INC
+    // is that ok?
+        printf("none works?\n");
+        newEdge.x = 0;
+        newEdge.y = 0;
     }
     return newEdge;
 }
@@ -1129,7 +1138,7 @@ static int validNewEdge(Game g, edge line, int player) {
     point points[4];
     int i = 0;
 
-    printf("Getting points in validNewEdge\n");
+    printf("Getting points in validNewEdge. Line x:%lf y:%lf\n", line.x, line.y);
     // Get all possible points
     if ((x >= 0) && (y >= 0)) {
         points[0] = * (g->gameBoard->points[(int)floor(x)][(int)floor(y)]);
