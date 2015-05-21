@@ -717,7 +717,10 @@ int isLegalAction(Game g, action a) {
             } else if (validPoint(pathToPoint(a.destination).x,
                 pathToPoint(a.destination).y) == FALSE) {
                 isLegal = FALSE;
-            }
+            } else if (a.actionCode == OBTAIN_ARC && 
+                strcmp (a.destination, "") == 0) {
+                isLegal = FALSE;
+            } 
         }
 
         // edge actionEdge = pathToEdgeF (a.destination);
