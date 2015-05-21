@@ -99,14 +99,14 @@ void testThrowDice (void) {
     //Create a new game to test on
     Game testGame = newGame (disciplines, diceScores);
     //Throw the dice to advance the turn
-    throwDice (testGame, 1);
+    throwDice (testGame, 2);
     //Check that the turn is Terra Nullis
     assert (getTurnNumber (testGame) == 0);
     //Check that the turn advances again
-    throwDice (testGame, 1);
+    throwDice (testGame, 2);
     assert (getTurnNumber (testGame) == 1);
     //And Once more for luck
-    throwDice (testGame, 1);
+    throwDice (testGame, 2);
     assert (getTurnNumber (testGame) == 2);
     
     int turnNum = 3;
@@ -138,7 +138,7 @@ void testGetMostPublications (void) {
     testAction.actionCode = OBTAIN_PUBLICATION;
 
     //Throw the dice to progress to a turn
-    throwDice (testGame, 1);
+    throwDice (testGame, 2);
 
     //Get whose turn it is now
     playersTurn = getWhoseTurn (testGame);
@@ -196,7 +196,7 @@ void testGetARC (void){
 
 
     //Advance turn from Terra Nullis
-    throwDice (testGame, 1);
+    throwDice (testGame, 2);
 
     //Get whose turn it is now
     playersTurn = getWhoseTurn (testGame);
@@ -211,7 +211,7 @@ void testGetARC (void){
     assert (getARC (testGame, "L") == playersTurn);
 
     //Advance turn from Previous
-    throwDice (testGame, 1);
+    throwDice (testGame, 2);
 
     //Get whose turn it is now
     playersTurn = getWhoseTurn (testGame);
@@ -225,7 +225,7 @@ void testGetARC (void){
     assert (getARC (testGame, "LR") == playersTurn);
 
     //Advance turn from Previous
-    throwDice (testGame, 1);
+    throwDice (testGame, 2);
 
     //Get whose turn it is now
     playersTurn = getWhoseTurn (testGame);
@@ -257,7 +257,7 @@ void testGetGO8s (void){
     assert (getGO8s (testGame, UNI_C) == 0);
 
     //Advance turn from Terra Nullis
-    throwDice (testGame, 1);
+    throwDice (testGame, 2);
 
     //Get whose turn it is now
     player = getWhoseTurn (testGame);
@@ -280,7 +280,7 @@ void testGetGO8s (void){
     assert (getGO8s (testGame, player) == 2);
 
     //Change the player
-    throwDice (testGame, 1);
+    throwDice (testGame, 2);
 
     //Get whose turn it is now
     player = getWhoseTurn (testGame);
@@ -875,7 +875,7 @@ void testGetKPIpoints (void) {
     
     //advance to UNI_B build arc, check +2 for arc and +10 for most arcs
     
-    throwDice (testGame ,6);
+    throwDice (testGame, 6);
     testAction.actionCode = OBTAIN_ARC;
     strcpy (testAction.destination, "RRLLL"); 
     makeAction (testGame, testAction);
@@ -1041,7 +1041,7 @@ void testGetTurnNumber (void) {
     Game testGame = newGame (disciplines, dice);
     
     // use throwDice to make a turn
-    throwDice (testGame, 1);
+    throwDice (testGame, 2);
     // assert if the turn number has increased
     assert (getTurnNumber (testGame) == 0);
     // use throwDice to make a turn
@@ -1655,7 +1655,7 @@ void testGetCampuses (void) {
     assert (getCampuses (testGame, UNI_C) == 2);
     
     // make a turn
-    throwDice (testGame, 1);
+    throwDice (testGame, 2);
         
     // assert that the vertex at the path is vacant
     assert (getCampus (testGame, "LRRRL") == VACANT_VERTEX);
