@@ -133,5 +133,5 @@ This will give you a line by line of what is different in your code compared to 
 
 ## How to compile to make sure it runs on the CSE
 Apparently this:
-> gcc -std=gnu99 -Wall -Werror -fno-omit-frame-pointer -Og -g -o testGame testGame.c Game.c -lm
+> gcc -std=gnu99 -Wall -Werror -fno-omit-frame-pointer -O -g -o testing testGame.c Game.c -lm
 
