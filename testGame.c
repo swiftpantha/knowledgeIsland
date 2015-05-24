@@ -66,11 +66,11 @@ int main (int argc, char *argv[]) {
     testGetTurnNumber ();
     testGetCampuses ();
     testMakeAction ();
-    testGetMostARCs ();
+    //testGetMostARCs ();
     testGetCampus ();
     testGetARCs ();
     testGetPublications ();
-    testGetCampuses ();
+    //testGetCampuses ();
     testThrowDice ();
     testGetMostPublications ();
     testGetARC ();
