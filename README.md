@@ -135,3 +135,6 @@ This will give you a line by line of what is different in your code compared to 
 Apparently this:
 > gcc -std=gnu99 -Wall -Werror -fno-omit-frame-pointer -O -g -o testing testGame.c Game.c -lm
 
+Testing our testGame.c with the "perfect" Game.o
+> gcc -Wall -Werror -O -o testing Game.o testGame.c
+

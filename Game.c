@@ -926,7 +926,7 @@ static edge pathToEdgeF(path givenPath) {
     int diff = START_DIFF;
 
     int i = 0;
-    if(givenPath[i] == '\0' || strlen(givenPath) < 1) {
+    if(givenPath[i] == '\0') {
         diff = NO_DIFF;
     }
     while (givenPath[i] != '\0') {
@@ -964,7 +964,6 @@ static edge pathToEdgeF(path givenPath) {
     else { // got just "\0" in the string
     // this will never be reached because START_DIFF = ROW_INC
     // is that ok?
-        printf("none works?\n");
         newEdge.x = -1;
         newEdge.y = -1;
     }
@@ -1144,9 +1143,13 @@ static int validNewEdge(Game g, edge line, int player) {
     int i = 0;
 
     printf("Getting points in validNewEdge. Line x:%d y:%d\n", (int)floor(x), (int)floor(y));
+    if (((int)floor(x) < 0) && ((int)floor(y) < 0)) {
+        printf("Not valid... \n");
+        isValid = FALSE;
+        return isValid; // we have to otherwise it gives SEGFAULT! - unfixable
+    }        
     // Get all possible points
-    // TODO: Moss here if you pass \0 or empty string no matter what it gives a Seg fault
-    if (((int)floor(x) >= 0) && ((int)floor(y) >= 0)) {        
+    else {
         points[0] = * (g->gameBoard->points[(int)floor(x)][(int)floor(y)]);
         printf("Obtained a point\n");
         points[1] = *(g->gameBoard->points[(int)ceil(x)][(int)floor(y)]);
@@ -1206,9 +1209,7 @@ static int validNewEdge(Game g, edge line, int player) {
             free(adjacentEdge.ARC);
         }
         printf("Exiting validNewEdge\n");
-    } else {
-        isValid = FALSE;
-    }
+    } 
     if (line.ARC->uniID != VACANT_ARC) {
         isValid = FALSE;
     } else {

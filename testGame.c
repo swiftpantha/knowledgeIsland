@@ -30,71 +30,132 @@
 #define REGION_17 17
 #define REGION_18 18
 
-
-void testDisposeGame (void);
+// main testing function
+Game testNewGame (void);
+void testThrowDice (void);
 void testGetDiscipline (void);
 void testGetTurnNumber (void);
-void testIsLegalAction (void);
-void testGetCampuses (void);
-void testMakeAction (void);
-void testGetMostARCs (void);
-void testGetCampus (void);
-void testGetARCs (void);
-void testGetPublications (void);
-void testThrowDice (void);
-void testGetMostPublications (void);
-void testGetARC (void);
-void testGetGO8s (void);
-void testGetStudents (void);
-void testGetDiceValue (void);
 void testGetWhoseTurn (void);
-void testGetKPIpoints (void);
-void testGetIPs (void);
+void testGetDiceValue (void);
+void testGetCampus (void);
+void testGetARC (void);
+void testGameplay (Game testGame);
+void makeSafeAction (Game g, action a);
+void testDisposeGame (Game g);
+//void testIsLegalAction (void);
+//void testGetCampuses (void);
+//void testGetMostARCs (void);
+//void testGetARCs (void);
+//void testGetPublications (void);
+//void testGetMostPublications (void);
+//void testGetGO8s (void);
+//void testGetStudents (void);
+//void testGetKPIpoints (void);
+//void testGetIPs (void);
+
+// additional functions helpful for testing/debugging
 int rollDice (int no7);
-void failedExternalTests(void);
-void externalTest001(void);
-void externalTest002(void);
-void failedExternalTestSimon(void);
-void failedExternalTestMeghana(void);
 void printScore (Game g, int player);
+// external test functions
+void failedExternalTests (void);
+void externalTest001 (void);
+void externalTest002 (void);
+void failedExternalTestSimon (void);
+void failedExternalTestMeghana (void);
 
 
 int main (int argc, char *argv[]) {
     
-    testDisposeGame ();
-    testGetDiscipline ();
-    testGetTurnNumber ();
-    testGetCampuses ();
-    testMakeAction ();
-    //testGetMostARCs ();
-    testGetCampus ();
-    testGetARCs ();
-    testGetPublications ();
-    //testGetCampuses ();
+    Game testGame = testNewGame ();    
     testThrowDice ();
-    testGetMostPublications ();
-    testGetARC ();
-    testGetGO8s ();
-    testGetStudents ();
+    testGetTurnNumber ();
+    testGetDiscipline ();
     testGetDiceValue ();
     testGetWhoseTurn ();
-    testGetKPIpoints ();
-    printf("============================ Gameplay step-by-step test for isLegalAction ============================\n");
-    testIsLegalAction ();
+    testGetCampus ();
+    testGetARC ();
+
+    // test all the rest of small functions while testing isLegalAction on the way
+    // it is much more reliable
+    testGameplay(testGame);
+
+    //testGetStudents ();
+    //testGetCampus ();
+    //testGetARC ();
+
+    //testGetARCs ();
+    //testGetGO8s ();
+
+    //testGetPublications ();
+    //testGetMostPublications ();
+    //testGetCampuses ();
+    //testGetMostARCs ();
+    // testGetKPIpoints ();
+    
+    // in the end test disposeGame - but we can't really test it...
+    testDisposeGame (testGame);
+    
     // extrenal tests
-    /*
     printf("============================ EXTERNAL TESTS FROM Round1 ============================\n");
     externalTest001();
     failedExternalTests ();
     failedExternalTestSimon ();
     failedExternalTestMeghana();
     failedExternalTests ();
-    externalTest002();*/
+    externalTest002();
+
     printf ("All tests passed. You are awesome!\n");
 
     return EXIT_SUCCESS;
 }
 
+
+Game testNewGame(void) {
+    printf ("Testing newGame()\n");
+
+    int disciplines[] = DEFAULT_DISCIPLINES;
+    int diceScores[] = DEFAULT_DICE;
+    //Create a new game to test on
+    Game testGame = newGame (disciplines, diceScores);
+    
+    // assert initial KPIs are 2*no of campus points == 20
+    assert (getKPIpoints (testGame, UNI_A) == 20);
+    assert (getKPIpoints (testGame, UNI_B) == 20);
+    assert (getKPIpoints (testGame, UNI_C) == 20);
+    
+    //Check everyone has zero to start off with
+    assert (getStudents (testGame, UNI_A, STUDENT_THD) == 0);
+    assert (getStudents (testGame, UNI_A, STUDENT_BPS) == 3);
+    assert (getStudents (testGame, UNI_A, STUDENT_BQN) == 3);
+    assert (getStudents (testGame, UNI_A, STUDENT_MJ) == 1);
+    assert (getStudents (testGame, UNI_A, STUDENT_MTV) == 1);
+    assert (getStudents (testGame, UNI_A, STUDENT_MMONEY) == 1);
+    assert (getStudents (testGame, UNI_B, STUDENT_THD) == 0);
+    assert (getStudents (testGame, UNI_B, STUDENT_BPS) == 3);
+    assert (getStudents (testGame, UNI_B, STUDENT_BQN) == 3);
+    assert (getStudents (testGame, UNI_B, STUDENT_MJ) == 1);
+    assert (getStudents (testGame, UNI_B, STUDENT_MTV) == 1);
+    assert (getStudents (testGame, UNI_B, STUDENT_MMONEY) == 1);
+    assert (getStudents (testGame, UNI_C, STUDENT_THD) == 0);
+    assert (getStudents (testGame, UNI_C, STUDENT_BPS) == 3);
+    assert (getStudents (testGame, UNI_C, STUDENT_BQN) == 3);
+    assert (getStudents (testGame, UNI_C, STUDENT_MJ) == 1);
+    assert (getStudents (testGame, UNI_C, STUDENT_MTV) == 1);
+    assert (getStudents (testGame, UNI_C, STUDENT_MMONEY) == 1);
+    
+    //Check that the most publications is currently NO_ONE
+    assert (getMostPublications (testGame) == NO_ONE);
+    // Check all players start with 0 arcs
+    assert (getMostARCs (testGame) == NO_ONE);
+    
+    //Test that everyone starts with none during Terra Nullis
+    assert (getGO8s (testGame, UNI_A) == 0);
+    assert (getGO8s (testGame, UNI_B) == 0);
+    assert (getGO8s (testGame, UNI_C) == 0);
+        
+    printf ("newGame works - You are Awesome!\n\n");
+    return testGame;
+}
 
 void testThrowDice (void) {
     printf ("Testing throwDice\n");
@@ -124,7 +185,8 @@ void testThrowDice (void) {
 }
 
 
-void testGetMostPublications (void) {
+
+/*void testGetMostPublications (void) {
     //Initialize Variables
     printf ("Testing getMostPublications\n");
     int playersTurn = 0;
@@ -163,7 +225,7 @@ void testGetMostPublications (void) {
     assert (getMostPublications (testGame) == playersTurn);
 
     printf ("getMostPublications works - You are Awesome!\n\n");
-}
+}*/
 
 
 
@@ -211,9 +273,12 @@ void testGetARC (void){
     strcpy (testAction.destination, "L");
 
     //Make the action
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     assert (getARC (testGame, "L") == playersTurn);
 
+    /*
+    BUILDING ARCS WITH NO RESOURCES
+    
     //Advance turn from Previous
     throwDice (testGame, 2);
 
@@ -225,7 +290,7 @@ void testGetARC (void){
     strcpy (testAction.destination, "LR");
 
     //Make the action
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     assert (getARC (testGame, "LR") == playersTurn);
 
     //Advance turn from Previous
@@ -239,14 +304,15 @@ void testGetARC (void){
     strcpy (testAction.destination, "RR");
 
     //Make the action
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     assert (getARC (testGame, "RR") == playersTurn);
+    */
 
     printf ("getARCs works - You are Awesome!\n\n");
 }
 
 
-void testGetGO8s (void){
+/*void testGetGO8s (void){
     printf ("Testing getGO8s\n");
     //Initialize varible 
     int player = 0;
@@ -299,10 +365,9 @@ void testGetGO8s (void){
 
     printf ("getGO8s works - You are Awesome!\n\n");
 }
+*/
 
-
-
-// STILL NEED TO FIGURE OUT HOW TO ASSIGN PEOPLE STUDENTS###############
+/*// STILL NEED TO FIGURE OUT HOW TO ASSIGN PEOPLE STUDENTS###############
 void testGetStudents (void) {
     //Initialize varible 
     //int player = 0;
@@ -314,26 +379,6 @@ void testGetStudents (void) {
     int diceScores[] = DEFAULT_DICE;
     //Create a new game to test on
     Game testGame = newGame (disciplines, diceScores);
-
-    //Check everyone has zero to start off with
-    assert (getStudents (testGame, UNI_A, STUDENT_THD) == 0);
-    assert (getStudents (testGame, UNI_A, STUDENT_BPS) == 3);
-    assert (getStudents (testGame, UNI_A, STUDENT_BQN) == 3);
-    assert (getStudents (testGame, UNI_A, STUDENT_MJ) == 1);
-    assert (getStudents (testGame, UNI_A, STUDENT_MTV) == 1);
-    assert (getStudents (testGame, UNI_A, STUDENT_MMONEY) == 1);
-    assert (getStudents (testGame, UNI_B, STUDENT_THD) == 0);
-    assert (getStudents (testGame, UNI_B, STUDENT_BPS) == 3);
-    assert (getStudents (testGame, UNI_B, STUDENT_BQN) == 3);
-    assert (getStudents (testGame, UNI_B, STUDENT_MJ) == 1);
-    assert (getStudents (testGame, UNI_B, STUDENT_MTV) == 1);
-    assert (getStudents (testGame, UNI_B, STUDENT_MMONEY) == 1);
-    assert (getStudents (testGame, UNI_C, STUDENT_THD) == 0);
-    assert (getStudents (testGame, UNI_C, STUDENT_BPS) == 3);
-    assert (getStudents (testGame, UNI_C, STUDENT_BQN) == 3);
-    assert (getStudents (testGame, UNI_C, STUDENT_MJ) == 1);
-    assert (getStudents (testGame, UNI_C, STUDENT_MTV) == 1);
-    assert (getStudents (testGame, UNI_C, STUDENT_MMONEY) == 1);
 
     //Advance turn from Terra Nullis
     throwDice (testGame, 11);
@@ -351,12 +396,15 @@ void testGetStudents (void) {
     throwDice (testGame, 6);
     //assert (getStudents (testGame, UNI_B, STUDENT_MJ) == 1);
     printf ("getStudents works - You are Awesome!\n\n");
-}
+}*/
 
-void testMakeAction (void) {
+// makes an action checking if it's legal first
+// used for tests only
+void makeSafeAction (Game g, action a) {
+    assert(isLegalAction(g, a) == TRUE); // this is to test ourselves - did we ask for illegal action?
+    makeAction(g, a);
     
-    printf ("Testing makeAction\n");
-    // test BUILD_CAMPUS and BUILD_GO8 and PASS 
+/*    // test BUILD_CAMPUS and BUILD_GO8 and PASS 
     testGetCampus ();
     // test OBTAIN_ARC 
     testGetARCs ();
@@ -368,16 +416,13 @@ void testMakeAction (void) {
     testGetIPs ();
     
     printf ("makeAction works - You are Awesome!\n\n");   
+*/
 }
 
 
-void testGetMostARCs (void) {
-    printf ("Testing getMostARCs\n");
-    // Create a game
-    int disciplines [] = DEFAULT_DISCIPLINES;
-    int dice[] = DEFAULT_DICE;
-    Game testGame = newGame (disciplines, dice);
-    
+/*void testGetMostARCs (void) {
+    printf ("Testing getMostARCs\n");    
+        
     // Check all players start with 0 arcs
     assert (getMostARCs (testGame) == NO_ONE);
     
@@ -388,7 +433,7 @@ void testGetMostARCs (void) {
     action testAction;
     testAction.actionCode = OBTAIN_ARC;
     strcpy (testAction.destination, "LBL");
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     
     // Check first player has most arcs
     
@@ -399,11 +444,11 @@ void testGetMostARCs (void) {
     
     // Create 2 arcs
     strcpy (testAction.destination, "RRL"); 
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     assert (getMostARCs (testGame) == UNI_A); 
     
     strcpy (testAction.destination, "RRLLL"); 
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     
     // Check player 2 has the most arcs
     assert (getMostARCs (testGame) == UNI_B);
@@ -411,7 +456,7 @@ void testGetMostARCs (void) {
     // Go to next player (C) and pass
     throwDice (testGame, 5);
     testAction.actionCode = PASS; 
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     
     // Check player 2 has the most arcs
     assert (getMostARCs (testGame) == UNI_B);
@@ -422,7 +467,7 @@ void testGetMostARCs (void) {
     assert (getMostARCs (testGame) == UNI_B);
     
     //  Pass and check player B still has the most arcs
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     assert (getMostARCs (testGame) == UNI_B);
     
     // Go to next player (B)
@@ -431,7 +476,7 @@ void testGetMostARCs (void) {
     // Create an arc
     testAction.actionCode = OBTAIN_ARC;
     strcpy (testAction.destination, "LRLRL"); 
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     
     // Check player 2 still has most arcs
     assert (getMostARCs (testGame) == UNI_B);
@@ -440,25 +485,25 @@ void testGetMostARCs (void) {
     throwDice (testGame, 9);
     
     strcpy (testAction.destination, "LRRLRLRLRLRBRL");
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     assert (getMostARCs (testGame) == UNI_B);
     
     strcpy (testAction.destination, "LRR");
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     assert (getMostARCs (testGame) == UNI_B);
     
     strcpy (testAction.destination, "LRLRRBR");
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     assert (getMostARCs (testGame) == UNI_B);
     
     strcpy (testAction.destination, "LRL");
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     assert (getMostARCs (testGame) == UNI_C);
     
     disposeGame (testGame);
     printf ("getMostARCs works - You are Awesome!\n\n");
 }
-
+*/
 
 void testGetCampus (void) {
     // Create a game
@@ -481,30 +526,33 @@ void testGetCampus (void) {
     assert (getCampus (testGame, "RRLRLLRLRL") == CAMPUS_C);
     
     // Go to next turn (A)
+    /*
+    TESTED PROPERLY IN GAMEPLAY
+    
     throwDice (testGame, 3);
 
     // Create and execute action that creates a campus
     action testAction;
     testAction.actionCode = BUILD_CAMPUS; 
     strcpy (testAction.destination, "LRR");
-    makeAction (testGame, testAction);
-    
-    // Check campus is built and other vertices are the same
-    assert (getCampus (testGame, "LRLBR") == VACANT_VERTEX);
-    assert (getCampus (testGame, "LRR") == CAMPUS_A);
-    assert (getCampus (testGame, "LR") == VACANT_VERTEX);
-    assert (getCampus (testGame, "LBLLRR") == VACANT_VERTEX);
+    if(makeSafeAction (testGame, testAction) == TRUE) {        
+        // Check campus is built and other vertices are the same
+        assert (getCampus (testGame, "LRLBR") == VACANT_VERTEX);
+        assert (getCampus (testGame, "LRR") == CAMPUS_A);
+        assert (getCampus (testGame, "LR") == VACANT_VERTEX);
+        assert (getCampus (testGame, "LBLLRR") == VACANT_VERTEX);
+    }
     
     // Create a GO8 campus
     testAction.actionCode = BUILD_GO8;  
     strcpy (testAction.destination, "");
-    makeAction (testGame, testAction);
-    
-    // Check campus is built and other vertices are correct
-    assert (getCampus (testGame, "") == GO8_A);
-    assert (getCampus (testGame, "LRR") == CAMPUS_A);
-    assert (getCampus (testGame, "RLLRRLLRLR") == CAMPUS_B);
-    assert (getCampus (testGame, "RLLRRLLRL") == VACANT_VERTEX);
+    if(makeSafeAction (testGame, testAction) == TRUE) {
+        // Check campus is built and other vertices are correct
+        assert (getCampus (testGame, "") == GO8_A);
+        assert (getCampus (testGame, "LRR") == CAMPUS_A);
+        assert (getCampus (testGame, "RLLRRLLRLR") == CAMPUS_B);
+        assert (getCampus (testGame, "RLLRRLLRL") == VACANT_VERTEX);
+    }
     
     // Go to next player (B)
     throwDice (testGame, 5);
@@ -512,24 +560,24 @@ void testGetCampus (void) {
     // Create a campus
     testAction.actionCode = BUILD_CAMPUS;  
     strcpy (testAction.destination, "RLLRRLLRLR");
-    makeAction (testGame, testAction);
-    
-    // Check campus is built and other vertices are correct
-    assert (getCampus (testGame, "LRLBR") == VACANT_VERTEX);
-    assert (getCampus (testGame, "LRR") == CAMPUS_A);
-    assert (getCampus (testGame, "") == GO8_A);
-    assert (getCampus (testGame, "RLLRRLLRLR") == CAMPUS_B);
-    
+    if(makeSafeAction (testGame, testAction) == TRUE) {
+        // Check campus is built and other vertices are correct
+        assert (getCampus (testGame, "LRLBR") == VACANT_VERTEX);
+        assert (getCampus (testGame, "LRR") == CAMPUS_A);
+        assert (getCampus (testGame, "") == GO8_A);
+        assert (getCampus (testGame, "RLLRRLLRLR") == CAMPUS_B);
+    }
+
     // Build another campus
     testAction.actionCode = BUILD_CAMPUS;  
     strcpy (testAction.destination, "RLLRRLLRLRRRBB");
-    makeAction (testGame, testAction);
-    
-    // Check campus is built and other vertices are correct
-    assert (getCampus (testGame, "LRLBR") == VACANT_VERTEX);
-    assert (getCampus (testGame, "") == GO8_A);
-    assert (getCampus (testGame, "RLLRRLLRLR") == CAMPUS_B);
-    assert (getCampus (testGame, "RLLRRLLRLRRRBB") == CAMPUS_B);
+    if(makeSafeAction (testGame, testAction)) {
+        // Check campus is built and other vertices are correct
+        assert (getCampus (testGame, "LRLBR") == VACANT_VERTEX);
+        assert (getCampus (testGame, "") == GO8_A);
+        assert (getCampus (testGame, "RLLRRLLRLR") == CAMPUS_B);
+        assert (getCampus (testGame, "RLLRRLLRLRRRBB") == CAMPUS_B);
+    }
     
     // Go to next player (C)
     throwDice (testGame, 5);
@@ -537,28 +585,28 @@ void testGetCampus (void) {
     // Create a campus
     testAction.actionCode = BUILD_CAMPUS;  
     strcpy (testAction.destination, "LRRRLRLRL");
-    makeAction (testGame, testAction);
-    
-    // Check campus is built and other vertices are correct
-    assert (getCampus (testGame, "LRLBRLB") == VACANT_VERTEX);
-    assert (getCampus (testGame, "RLLRRLLRLR") == CAMPUS_B);
-    assert (getCampus (testGame, "RLLRRLLRLRRRBB") == CAMPUS_B);
-    assert (getCampus (testGame, "") == GO8_A);
-    assert (getCampus (testGame, "LRRRLRLRL") == CAMPUS_C);
+    if(makeSafeAction (testGame, testAction) == TRUE) {
+        // Check campus is built and other vertices are correct
+        assert (getCampus (testGame, "LRLBRLB") == VACANT_VERTEX);
+        assert (getCampus (testGame, "RLLRRLLRLR") == CAMPUS_B);
+        assert (getCampus (testGame, "RLLRRLLRLRRRBB") == CAMPUS_B);
+        assert (getCampus (testGame, "") == GO8_A);
+        assert (getCampus (testGame, "LRRRLRLRL") == CAMPUS_C);
+    }
     
     // Go to next player (A)
     throwDice (testGame, 5);
     
     // Pass player
     testAction.actionCode = PASS;  
-    makeAction (testGame, testAction);
-    
-    // Check vertices are still correct
-    assert (getCampus (testGame, "LRR") == CAMPUS_A);
-    assert (getCampus (testGame, "RLLRRLLRLR") == CAMPUS_B);
-    assert (getCampus (testGame, "LRLRLRRLRL") == CAMPUS_B);
-    assert (getCampus (testGame, "") == GO8_A);
-    assert (getCampus (testGame, "LRRRLRLRL") == CAMPUS_C);
+    if(makeSafeAction (testGame, testAction) == TRUE) {
+        // Check vertices are still correct
+        assert (getCampus (testGame, "LRR") == CAMPUS_A);
+        assert (getCampus (testGame, "RLLRRLLRLR") == CAMPUS_B);
+        assert (getCampus (testGame, "LRLRLRRLRL") == CAMPUS_B);
+        assert (getCampus (testGame, "") == GO8_A);
+        assert (getCampus (testGame, "LRRRLRLRL") == CAMPUS_C);
+    }
     
     // Go to next turn (B)
     throwDice (testGame, 3);
@@ -566,208 +614,20 @@ void testGetCampus (void) {
     // Create a campus
     testAction.actionCode = BUILD_GO8;  
     strcpy (testAction.destination, "RRLRL");
-    makeAction (testGame, testAction);
-    
-    // Check campus is built and other vertices are still empty
-    assert (getCampus (testGame, "LRLBR") == VACANT_VERTEX);
-    assert (getCampus (testGame, "LRR") == CAMPUS_A);
-    assert (getCampus (testGame, "RLLRRLLRLR") == CAMPUS_B);
-    assert (getCampus (testGame, "RLLRRLLRLRRRBB") == CAMPUS_B);
-    assert (getCampus (testGame, "RRLRL") == GO8_B);
-    assert (getCampus (testGame, "") == GO8_A);
-    assert (getCampus (testGame, "LRRRLRLRL") == CAMPUS_C);
-    
+    if(makeSafeAction (testGame, testAction) == TRUE) {
+        // Check campus is built and other vertices are still empty
+        assert (getCampus (testGame, "LRLBR") == VACANT_VERTEX);
+        assert (getCampus (testGame, "LRR") == CAMPUS_A);
+        assert (getCampus (testGame, "RLLRRLLRLR") == CAMPUS_B);
+        assert (getCampus (testGame, "RLLRRLLRLRRRBB") == CAMPUS_B);
+        assert (getCampus (testGame, "RRLRL") == GO8_B);
+        assert (getCampus (testGame, "") == GO8_A);
+        assert (getCampus (testGame, "LRRRLRLRL") == CAMPUS_C);
+    }
+    */
     disposeGame (testGame);
     printf ("getCampus works - You are Awesome!\n\n");
     
-}
-
-
-// test GetArcs function
-void testGetARCs (void) {
-    
-    printf ("Testing getARCs\n");
-    // Create a game
-    int disciplines [] = DEFAULT_DISCIPLINES;
-    int dice[] = DEFAULT_DICE;
-    Game testGame = newGame (disciplines, dice);
-    
-    // Check all players start with 0 arcs
-    assert (getARCs (testGame, UNI_A) == 0);
-    assert (getARCs (testGame, UNI_B) == 0);
-    assert (getARCs (testGame, UNI_C) == 0);
-    
-    // Go to next turn (A)
-    throwDice (testGame, 3);
-    
-    // Create and execute action that creates an arc
-    action testAction;
-    testAction.actionCode = OBTAIN_ARC; 
-    strcpy (testAction.destination, "LBL");
-    makeAction (testGame, testAction);
-    
-    // Check first player has 1 arc, others still have none
-    assert (getARCs (testGame, UNI_A) == 1);
-    assert (getARCs (testGame, UNI_B) == 0);
-    assert (getARCs (testGame, UNI_C) == 0);
-    
-    // Go to next player (B)
-    throwDice (testGame, 5);
-    
-    // Create 2 arcs
-    strcpy (testAction.destination, "RRLRL"); 
-    makeAction (testGame, testAction);
-    strcpy (testAction.destination, "RLLRRLL"); 
-    makeAction (testGame, testAction);
-    
-    // Check each player has the right number of arcs
-    assert (getARCs (testGame, UNI_A) == 1);
-    assert (getARCs (testGame, UNI_B) == 2);
-    assert (getARCs (testGame, UNI_C) == 0);
-    
-    // Go to next player (C)
-    throwDice (testGame, 5);
-    
-    // Pass player
-    testAction.actionCode = PASS; 
-    makeAction (testGame, testAction);
-    
-    // Check each player has the right number of arcs
-    assert (getARCs (testGame, UNI_A) == 1);
-    assert (getARCs (testGame, UNI_B) == 2);
-    assert (getARCs (testGame, UNI_C) == 0);
-    
-    // Go to next player (A)
-    throwDice (testGame, 2);
-    
-    // Check each player has the right number of arcs
-    assert (getARCs (testGame, UNI_A) == 1);
-    assert (getARCs (testGame, UNI_B) == 2);
-    assert (getARCs (testGame, UNI_C) == 0);
-    
-    // Pass player
-    testAction.actionCode = PASS; 
-    makeAction (testGame, testAction);
-    
-    // Go to next player (B)
-    throwDice (testGame, 5);
-    
-    // Pass player
-    testAction.actionCode = PASS; 
-    makeAction (testGame, testAction);
-    
-    // Check each player has the right number of arcs
-    assert (getARCs (testGame, UNI_A) == 1);
-    assert (getARCs (testGame, UNI_B) == 2);
-    assert (getARCs (testGame, UNI_C) == 0);
-    
-    // Go to next player (C)
-    throwDice (testGame, 5);
-    
-    // Create an arc
-    testAction.actionCode = OBTAIN_ARC; 
-    strcpy (testAction.destination, "RLLRRLLRLRR"); 
-    makeAction (testGame, testAction);
-    
-    // Check each player has the right number of arcs
-    assert (getARCs (testGame, UNI_A) == 1);
-    assert (getARCs (testGame, UNI_B) == 2);
-    assert (getARCs (testGame, UNI_C) == 1);
-    disposeGame (testGame);
-    printf ("getARCs works - You are Awesome!\n\n");
-
-}
-
-void testGetPublications (void) {
-    
-    printf ("Testing getPublications\n");
-    // Create a game
-    int disciplines [] = DEFAULT_DISCIPLINES;
-    int dice[] = DEFAULT_DICE;
-    Game testGame = newGame (disciplines, dice);
-    
-    // Check all players start with 0 publications
-    assert (getPublications (testGame, UNI_A) == 0);
-    assert (getPublications (testGame, UNI_B) == 0);
-    assert (getPublications (testGame, UNI_C) == 0);
-    
-    // Go to next turn (A)
-    throwDice (testGame, 3);
-    
-    // Create and execute action that creates a publication
-    action testAction;
-    testAction.actionCode = OBTAIN_PUBLICATION; 
-    makeAction (testGame, testAction);
-    
-    // Check first player has 1 publication, others still have none
-    assert (getPublications (testGame, UNI_A) == 1);
-    assert (getPublications (testGame, UNI_B) == 0);
-    assert (getPublications (testGame, UNI_C) == 0);
-    
-    // Go to next player (B)
-    throwDice (testGame, 5);
-    
-    // Create 2 publications
-    makeAction (testGame, testAction);
-    makeAction (testGame, testAction);
-    
-    // Check B has 2 publications and other players are also correct
-    assert (getPublications (testGame, UNI_A) == 1);
-    assert (getPublications (testGame, UNI_B) == 2);
-    assert (getPublications (testGame, UNI_C) == 0);
-    
-    // Go to next player (C)
-    throwDice (testGame, 5);
-    
-    // Pass player
-    testAction.actionCode = PASS; 
-    makeAction (testGame, testAction);
-    
-    // Check number of publications is correct
-    assert (getPublications (testGame, UNI_A) == 1);
-    assert (getPublications (testGame, UNI_B) == 2);
-    assert (getPublications (testGame, UNI_C) == 0);
-    
-    // Go to next player (A)
-    throwDice (testGame, 2);
-    assert (getPublications (testGame, UNI_A) == 1);
-    assert (getPublications (testGame, UNI_B) == 2);
-    assert (getPublications (testGame, UNI_C) == 0);
-    
-    // Pass player
-    testAction.actionCode = PASS; 
-    makeAction (testGame, testAction);
-    
-    // Check number of publications is correct
-    assert (getPublications (testGame, UNI_A) == 1);
-    assert (getPublications (testGame, UNI_B) == 2);
-    assert (getPublications (testGame, UNI_C) == 0);
-    
-    // Go to next player (B)
-    throwDice (testGame, 5);
-    
-    // Create a publications
-    testAction.actionCode = OBTAIN_PUBLICATION; 
-    makeAction (testGame, testAction);
-    
-    // Check number of publications is correct
-    assert (getPublications (testGame, UNI_A) == 1);
-    assert (getPublications (testGame, UNI_B) == 3);
-    assert (getPublications (testGame, UNI_C) == 0);
-    
-    // Go to next player (C)
-    throwDice (testGame, 5);
-    
-    // Create a publications
-    makeAction (testGame, testAction);
-    
-    // Check number of publications is correct
-    assert (getPublications (testGame, UNI_A) == 1);
-    assert (getPublications (testGame, UNI_B) == 3);
-    assert (getPublications (testGame, UNI_C) == 1);
-    
-    disposeGame (testGame);
-    printf ("getPublications Works - You are Awesome!\n\n");
 }
 
 void testGetDiceValue (void) {
@@ -845,169 +705,19 @@ void testGetWhoseTurn (void) {
     }
   
     printf ("getWhoseTurn works - You are Awesome!\n\n");
-    
-}
-
-void testGetKPIpoints (void) {
-    
-    printf("Testing getKPIpoints\n");
-    
-    
-    int disciplines[] = DEFAULT_DISCIPLINES;
-    int diceScores[] = DEFAULT_DICE;
-    //Create a new game to test on
-    Game testGame = newGame (disciplines, diceScores);
-    
-    // assert initial KPIs are 2*no of campus points == 20
-    
-    assert (getKPIpoints (testGame, UNI_A) == 20);
-    assert (getKPIpoints (testGame, UNI_B) == 20);
-    assert (getKPIpoints (testGame, UNI_C) == 20);
-    
-    //advance turn to UNI_A, build campus, check +10 KPI points
-    
-    throwDice (testGame, 4);
-    
-    action testAction;
-    testAction.actionCode = BUILD_CAMPUS;
-    strcpy (testAction.destination, "LRRLRLRLRLRBRL");
-    makeAction (testGame, testAction);
-    
-    assert (getKPIpoints (testGame, UNI_A) == 30);
-    assert (getKPIpoints (testGame, UNI_B) == 20);
-    assert (getKPIpoints (testGame, UNI_C) == 20);
-    
-    //advance to UNI_B build arc, check +2 for arc and +10 for most arcs
-    
-    throwDice (testGame, 6);
-    testAction.actionCode = OBTAIN_ARC;
-    strcpy (testAction.destination, "RRLLL"); 
-    makeAction (testGame, testAction);
-    
-    assert (getKPIpoints (testGame, UNI_A) == 30);
-    assert (getKPIpoints (testGame, UNI_B) == 32);
-    assert (getKPIpoints (testGame, UNI_C) == 20);
-    
-    //advance to UNI_C get publication, check for most publications
-    
-    throwDice (testGame, 4);
-    
-    testAction.actionCode = OBTAIN_PUBLICATION;
-    makeAction (testGame, testAction);
-    
-    assert (getKPIpoints (testGame, UNI_A) == 30);
-    assert (getKPIpoints (testGame, UNI_B) == 32);
-    assert (getKPIpoints (testGame, UNI_C) == 30);
-    
-    //advance to UNI_A get publication and get GO8, check only +10
-    // as not first uni to reach most publications
-    
-    throwDice (testGame, 4);
-    testAction.actionCode = BUILD_GO8;
-    strcpy (testAction.destination, "LBL"); 
-    makeAction (testGame, testAction);
-    assert (getKPIpoints (testGame, UNI_A) == 40);
-    assert (getKPIpoints (testGame, UNI_B) == 32);
-    assert (getKPIpoints (testGame, UNI_C) == 30);
-    
-    //obtain arc, test is now most arcs
-    
-    testAction.actionCode = OBTAIN_ARC;
-    strcpy (testAction.destination, "LRR");
-    makeAction (testGame, testAction);
-    strcpy (testAction.destination, "LRRL");
-    makeAction (testGame, testAction);
-    
-    assert (getKPIpoints (testGame, UNI_A) == 54);
-    assert (getKPIpoints (testGame, UNI_B) == 22);
-    assert (getKPIpoints (testGame, UNI_C) == 30);
-    
-    //advance to UNI_B obtain IP
-    
-    throwDice (testGame, 4);
-    testAction.actionCode = OBTAIN_IP_PATENT;
-    makeAction (testGame, testAction);
-    
-    assert (getKPIpoints (testGame, UNI_A) == 54);
-    assert (getKPIpoints (testGame, UNI_B) == 32);
-    assert (getKPIpoints (testGame, UNI_C) == 30);
-    
-    
-    
-    printf ("getKPIpoints works - You are Awesome!\n\n");
-    
-}
-
-void testGetIPs (void) {
-    
-    printf("Testing getIPs\n");
-    
-    // initialise testGame test all start at 0
-    
-    int disciplines[] = DEFAULT_DISCIPLINES;
-    int diceScores[] = DEFAULT_DICE;
-    //Create a new game to test on
-    Game testGame = newGame (disciplines, diceScores);
-    assert (getIPs (testGame, UNI_A) == 0);
-    assert (getIPs (testGame, UNI_B) == 0);
-    assert (getIPs (testGame, UNI_C) == 0);
-    
-    //advance turn to UNI_A obtain patent
-    throwDice (testGame, 4);
-    action testAction;
-    testAction.actionCode = OBTAIN_IP_PATENT;
-    makeAction (testGame, testAction);
-    
-    assert (getIPs (testGame, UNI_A) == 1);
-    assert (getIPs (testGame, UNI_B) == 0);
-    assert (getIPs (testGame, UNI_C) == 0);
-    
-    //advance turn to UNI_C obtain patent
-    throwDice (testGame, 3);
-    throwDice (testGame, 2);
-    
-    makeAction (testGame, testAction);
-    
-    assert (getIPs (testGame, UNI_A) == 1);
-    assert (getIPs (testGame, UNI_B) == 0);
-    assert (getIPs (testGame, UNI_C) == 1);
-    
-    //advance turn to UNI_B obtain patent
-    
-    throwDice (testGame, 6);
-    throwDice (testGame, 8);
-    makeAction (testGame, testAction);
-    
-    assert (getIPs (testGame, UNI_A) == 1);
-    assert (getIPs (testGame, UNI_B) == 1);
-    assert (getIPs (testGame, UNI_C) == 1);
-    
-    throwDice (testGame, 8);
-    
-    makeAction (testGame, testAction);
-    makeAction (testGame, testAction);
-    
-    assert (getIPs (testGame, UNI_A) == 1);
-    assert (getIPs (testGame, UNI_B) == 1);
-    assert (getIPs (testGame, UNI_C) == 3);
-    
-    printf ("getIPs works - You are Awesome!\n\n");
 }
 
 // testing: void disposeGame (Game g);
 // free all the memory malloced for the game
-void testDisposeGame (void) {
+void testDisposeGame (Game g) {
     printf ("Testing disposeGame\n");
     
-    // create a test game
-    int disciplines[] = DEFAULT_DISCIPLINES;
-    int dice[] = DEFAULT_DICE;
-    Game testGame = newGame (disciplines, dice);
+    assert(g != NULL);
     
     // just run the function
     // may be need to check if game is not pointing to anything meaningful anymore
     // i.e. pointer is cleared
-    disposeGame (testGame);
+    disposeGame (g);
 
     printf ("disposeGame works - You are Awesome!\n\n");
 }
@@ -1054,6 +764,340 @@ void testGetTurnNumber (void) {
     printf ("getTurnNumber works - You are Awesome!\n\n");
 }
 
+
+/*void testGetKPIpoints (void) {
+    
+    printf("Testing getKPIpoints\n");
+    
+    
+    int disciplines[] = DEFAULT_DISCIPLINES;
+    int diceScores[] = DEFAULT_DICE;
+    //Create a new game to test on
+    Game testGame = newGame (disciplines, diceScores);
+    
+    // assert initial KPIs are 2*no of campus points == 20
+    
+    assert (getKPIpoints (testGame, UNI_A) == 20);
+    assert (getKPIpoints (testGame, UNI_B) == 20);
+    assert (getKPIpoints (testGame, UNI_C) == 20);
+    
+    //advance turn to UNI_A, build campus, check +10 KPI points
+    
+    throwDice (testGame, 4);
+    
+    action testAction;
+    testAction.actionCode = BUILD_CAMPUS;
+    strcpy (testAction.destination, "LRRLRLRLRLRBRL");
+    makeSafeAction (testGame, testAction);
+    
+    assert (getKPIpoints (testGame, UNI_A) == 30);
+    assert (getKPIpoints (testGame, UNI_B) == 20);
+    assert (getKPIpoints (testGame, UNI_C) == 20);
+    
+    //advance to UNI_B build arc, check +2 for arc and +10 for most arcs
+    
+    throwDice (testGame, 6);
+    testAction.actionCode = OBTAIN_ARC;
+    strcpy (testAction.destination, "RRLLL"); 
+    makeSafeAction (testGame, testAction);
+    
+    assert (getKPIpoints (testGame, UNI_A) == 30);
+    assert (getKPIpoints (testGame, UNI_B) == 32);
+    assert (getKPIpoints (testGame, UNI_C) == 20);
+    
+    //advance to UNI_C get publication, check for most publications
+    
+    throwDice (testGame, 4);
+    
+    testAction.actionCode = OBTAIN_PUBLICATION;
+    makeSafeAction (testGame, testAction);
+    
+    assert (getKPIpoints (testGame, UNI_A) == 30);
+    assert (getKPIpoints (testGame, UNI_B) == 32);
+    assert (getKPIpoints (testGame, UNI_C) == 30);
+    
+    //advance to UNI_A get publication and get GO8, check only +10
+    // as not first uni to reach most publications
+    
+    throwDice (testGame, 4);
+    testAction.actionCode = BUILD_GO8;
+    strcpy (testAction.destination, "LBL"); 
+    makeSafeAction (testGame, testAction);
+    assert (getKPIpoints (testGame, UNI_A) == 40);
+    assert (getKPIpoints (testGame, UNI_B) == 32);
+    assert (getKPIpoints (testGame, UNI_C) == 30);
+    
+    //obtain arc, test is now most arcs
+    
+    testAction.actionCode = OBTAIN_ARC;
+    strcpy (testAction.destination, "LRR");
+    makeSafeAction (testGame, testAction);
+    strcpy (testAction.destination, "LRRL");
+    makeSafeAction (testGame, testAction);
+    
+    assert (getKPIpoints (testGame, UNI_A) == 54);
+    assert (getKPIpoints (testGame, UNI_B) == 22);
+    assert (getKPIpoints (testGame, UNI_C) == 30);
+    
+    //advance to UNI_B obtain IP
+    
+    throwDice (testGame, 4);
+    testAction.actionCode = OBTAIN_IP_PATENT;
+    makeSafeAction (testGame, testAction);
+    
+    assert (getKPIpoints (testGame, UNI_A) == 54);
+    assert (getKPIpoints (testGame, UNI_B) == 32);
+    assert (getKPIpoints (testGame, UNI_C) == 30);
+    
+    
+    
+    printf ("getKPIpoints works - You are Awesome!\n\n");
+    
+}*/
+
+// test GetArcs function
+/*void testGetARCs (void) {
+    
+    printf ("Testing getARCs\n");
+    // Create a game
+    int disciplines [] = DEFAULT_DISCIPLINES;
+    int dice[] = DEFAULT_DICE;
+    Game testGame = newGame (disciplines, dice);
+    
+    // Check all players start with 0 arcs
+    assert (getARCs (testGame, UNI_A) == 0);
+    assert (getARCs (testGame, UNI_B) == 0);
+    assert (getARCs (testGame, UNI_C) == 0);
+    
+    // Go to next turn (A)
+    throwDice (testGame, 3);
+    
+    // Create and execute action that creates an arc
+    action testAction;
+    testAction.actionCode = OBTAIN_ARC; 
+    strcpy (testAction.destination, "LBL");
+    if (makeSafeAction (testGame, testAction) == TRUE) {
+        // Check first player has 1 arc, others still have none
+        assert (getARCs (testGame, UNI_A) == 1);
+        assert (getARCs (testGame, UNI_B) == 0);
+        assert (getARCs (testGame, UNI_C) == 0);
+    }
+        
+    // Go to next player (B)
+    throwDice (testGame, 5);
+    
+    // Create 2 arcs
+    strcpy (testAction.destination, "RRLRL"); 
+    if (makeSafeAction (testGame, testAction) == TRUE) {
+        strcpy (testAction.destination, "RLLRRLL"); 
+    }
+    if (makeSafeAction (testGame, testAction) == TRUE) {
+        // Check each player has the right number of arcs
+        assert (getARCs (testGame, UNI_A) == 1);
+        assert (getARCs (testGame, UNI_B) == 2);
+        assert (getARCs (testGame, UNI_C) == 0);
+    }
+    
+    // Go to next player (C)
+    throwDice (testGame, 5);
+    
+    // Pass player
+    testAction.actionCode = PASS; 
+    if (makeSafeAction (testGame, testAction) == TRUE) {
+        // Check each player has the right number of arcs
+        assert (getARCs (testGame, UNI_A) == 1);
+        assert (getARCs (testGame, UNI_B) == 2);
+        assert (getARCs (testGame, UNI_C) == 0);
+
+        // Go to next player (A)
+        throwDice (testGame, 2);
+    
+        // Check each player has the right number of arcs
+        assert (getARCs (testGame, UNI_A) == 1);
+        assert (getARCs (testGame, UNI_B) == 2);
+        assert (getARCs (testGame, UNI_C) == 0);
+    }
+    
+    // Pass player
+    testAction.actionCode = PASS; 
+    makeSafeAction (testGame, testAction);
+        
+    // Go to next player (B)
+    throwDice (testGame, 5);
+    
+    // Pass player
+    testAction.actionCode = PASS; 
+    makeSafeAction (testGame, testAction);
+    
+    // Check each player has the right number of arcs
+    assert (getARCs (testGame, UNI_A) == 1);
+    assert (getARCs (testGame, UNI_B) == 2);
+    assert (getARCs (testGame, UNI_C) == 0);
+    
+    // Go to next player (C)
+    throwDice (testGame, 5);
+    
+    // Create an arc
+    testAction.actionCode = OBTAIN_ARC; 
+    strcpy (testAction.destination, "RLLRRLLRLRR"); 
+    if (makeSafeAction (testGame, testAction)) {
+        // Check each player has the right number of arcs
+        assert (getARCs (testGame, UNI_A) == 1);
+        assert (getARCs (testGame, UNI_B) == 2);
+        assert (getARCs (testGame, UNI_C) == 1);
+    }
+    printf ("getARCs works - You are Awesome!\n\n");
+
+}*/
+
+/*void testGetPublications (void) {
+    
+    printf ("Testing getPublications\n");
+    // Create a game
+    int disciplines [] = DEFAULT_DISCIPLINES;
+    int dice[] = DEFAULT_DICE;
+    Game testGame = newGame (disciplines, dice);
+    
+    // Check all players start with 0 publications
+    assert (getPublications (testGame, UNI_A) == 0);
+    assert (getPublications (testGame, UNI_B) == 0);
+    assert (getPublications (testGame, UNI_C) == 0);
+    
+    // Go to next turn (A)
+    throwDice (testGame, 3);
+    
+    // Create and execute action that creates a publication
+    action testAction;
+    testAction.actionCode = OBTAIN_PUBLICATION; 
+    makeSafeAction (testGame, testAction);
+    
+    // Check first player has 1 publication, others still have none
+    assert (getPublications (testGame, UNI_A) == 1);
+    assert (getPublications (testGame, UNI_B) == 0);
+    assert (getPublications (testGame, UNI_C) == 0);
+    
+    // Go to next player (B)
+    throwDice (testGame, 5);
+    
+    // Create 2 publications
+    makeSafeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
+    
+    // Check B has 2 publications and other players are also correct
+    assert (getPublications (testGame, UNI_A) == 1);
+    assert (getPublications (testGame, UNI_B) == 2);
+    assert (getPublications (testGame, UNI_C) == 0);
+    
+    // Go to next player (C)
+    throwDice (testGame, 5);
+    
+    // Pass player
+    testAction.actionCode = PASS; 
+    makeSafeAction (testGame, testAction);
+    
+    // Check number of publications is correct
+    assert (getPublications (testGame, UNI_A) == 1);
+    assert (getPublications (testGame, UNI_B) == 2);
+    assert (getPublications (testGame, UNI_C) == 0);
+    
+    // Go to next player (A)
+    throwDice (testGame, 2);
+    assert (getPublications (testGame, UNI_A) == 1);
+    assert (getPublications (testGame, UNI_B) == 2);
+    assert (getPublications (testGame, UNI_C) == 0);
+    
+    // Pass player
+    testAction.actionCode = PASS; 
+    makeSafeAction (testGame, testAction);
+    
+    // Check number of publications is correct
+    assert (getPublications (testGame, UNI_A) == 1);
+    assert (getPublications (testGame, UNI_B) == 2);
+    assert (getPublications (testGame, UNI_C) == 0);
+    
+    // Go to next player (B)
+    throwDice (testGame, 5);
+    
+    // Create a publications
+    testAction.actionCode = OBTAIN_PUBLICATION; 
+    makeSafeAction (testGame, testAction);
+    
+    // Check number of publications is correct
+    assert (getPublications (testGame, UNI_A) == 1);
+    assert (getPublications (testGame, UNI_B) == 3);
+    assert (getPublications (testGame, UNI_C) == 0);
+    
+    // Go to next player (C)
+    throwDice (testGame, 5);
+    
+    // Create a publications
+    makeSafeAction (testGame, testAction);
+    
+    // Check number of publications is correct
+    assert (getPublications (testGame, UNI_A) == 1);
+    assert (getPublications (testGame, UNI_B) == 3);
+    assert (getPublications (testGame, UNI_C) == 1);
+    
+    disposeGame (testGame);
+    printf ("getPublications Works - You are Awesome!\n\n");
+}*/
+
+/*void testGetIPs (void) {
+    
+    printf("Testing getIPs\n");
+    
+    // initialise testGame test all start at 0
+    
+    int disciplines[] = DEFAULT_DISCIPLINES;
+    int diceScores[] = DEFAULT_DICE;
+    //Create a new game to test on
+    Game testGame = newGame (disciplines, diceScores);
+    assert (getIPs (testGame, UNI_A) == 0);
+    assert (getIPs (testGame, UNI_B) == 0);
+    assert (getIPs (testGame, UNI_C) == 0);
+    
+    //advance turn to UNI_A obtain patent
+    throwDice (testGame, 4);
+    action testAction;
+    testAction.actionCode = OBTAIN_IP_PATENT;
+    makeSafeAction (testGame, testAction);
+    
+    assert (getIPs (testGame, UNI_A) == 1);
+    assert (getIPs (testGame, UNI_B) == 0);
+    assert (getIPs (testGame, UNI_C) == 0);
+    
+    //advance turn to UNI_C obtain patent
+    throwDice (testGame, 3);
+    throwDice (testGame, 2);
+    
+    makeSafeAction (testGame, testAction);
+    
+    assert (getIPs (testGame, UNI_A) == 1);
+    assert (getIPs (testGame, UNI_B) == 0);
+    assert (getIPs (testGame, UNI_C) == 1);
+    
+    //advance turn to UNI_B obtain patent
+    
+    throwDice (testGame, 6);
+    throwDice (testGame, 8);
+    makeSafeAction (testGame, testAction);
+    
+    assert (getIPs (testGame, UNI_A) == 1);
+    assert (getIPs (testGame, UNI_B) == 1);
+    assert (getIPs (testGame, UNI_C) == 1);
+    
+    throwDice (testGame, 8);
+    
+    makeSafeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
+    
+    assert (getIPs (testGame, UNI_A) == 1);
+    assert (getIPs (testGame, UNI_B) == 1);
+    assert (getIPs (testGame, UNI_C) == 3);
+    
+    printf ("getIPs works - You are Awesome!\n\n");
+}*/
+
 // testing: int isLegalAction (Game g, action a);
 // returns TRUE if it is legal for the current
 // player to make the specified action, FALSE otherwise.
@@ -1099,21 +1143,18 @@ void testGetTurnNumber (void) {
 // #define STUDENT_MTV 4
 // #define STUDENT_MMONEY 5
 //
-// LATER: this test will grow significantly to test all possible loopholes and exploits
-// later: for all disciplines check valid/invalid situations depending on the rules
-// later: obtain_pub/obtain_patent for player - not sure yet
-// later: check amount of students for the campus placing
-void testIsLegalAction (void) {
-    printf("Testing isLegalAction\n");
+void testGameplay (Game testGame) {
+    printf("================ Testing Gameplay ================\n");
+
+    assert(testGame != NULL);
+
+    int player = 0;
+    
+    printf("> Starting points = 20. To make sure gameplay is working fine.\n");
+    assert(getKPIpoints(testGame, 1) == 20); // that's what it should be    
     
     // (2,0) is the starting point
     
-    // create a test game
-    int disciplines[] = DEFAULT_DISCIPLINES;
-    int dice[] = DEFAULT_DICE;
-    int player = 0;
-    printf("> Standard setup game. Step by step actions...\n");
-    Game testGame = newGame(disciplines, dice);
     // create a test action
     action testAction;
 
@@ -1132,16 +1173,16 @@ void testIsLegalAction (void) {
     throwDice(testGame, 11); // this gives 1 MTV -- player 2
     throwDice(testGame, 11); // this gives 1 MTV -- player 3
     throwDice(testGame, 11); // this gives 1 MTV -- player 1
-    
+
     // is it the turn of player 1?
     printf("> Is it the turn of player 1?\n");
     player = getWhoseTurn(testGame);
     assert(player == 1);
     
+    // testKPIPoints - done here
     // getKPIpoints - should have 36 now
     printf("> Starting points = 20. To make sure gameplay is working fine.\n");
     assert(getKPIpoints(testGame, 1) == 20); // that's what it should be
-    
     
     printf("> Campus with no ARC test\n");
     // Player 1 has: 3 x BPS, 3 x B?, 5 x MTV, 4 x MJ, 1 x M$
@@ -1381,13 +1422,14 @@ void testIsLegalAction (void) {
     printScore(testGame, 1);
     assert(getKPIpoints(testGame, 1) == 78); // that's what it should be (1xARC + 1xG08)
     
-    // TO DO:
+    // TODO (for later rounds):
     // building arcs adjacent / crossing other people's arcs
     // building campuses on other's arcs - shouldn't be possible anyway because no arc of yours but still
     // you can build campus on the intersection of ARCs if there is no other campus
     // build campus on existing campus of other people (intersection of arcs is possible but this should not be)
     // spinoff with no enough resources
     // no more than 8 GO8s can exist in the game
+    // include testing testGetMostKPIs etc. that were disabled to make sure we don't make illegal actions
     
     // Player 1 has: 1 x BPS, 1 x B?, 6 x MTV, 0 x MJ, 0 x M$
     
@@ -1450,6 +1492,7 @@ void testIsLegalAction (void) {
     testAction.disciplineTo = STUDENT_MJ;
     assert(isLegalAction(testGame, testAction) == TRUE);
     makeAction(testGame, testAction); // retrain
+    assert(isLegalAction(testGame, testAction) == TRUE);
     makeAction(testGame, testAction); // retrain
     // Player 1 has: THD: 21 BPS: 1 BQN: 1 MJ: 2 MTV: 5 M$: 6
 
@@ -1551,12 +1594,12 @@ void testIsLegalAction (void) {
     action makeCampuses;
     makeCampuses.actionCode = BUILD_CAMPUS;
     strcpy (makeCampuses.destination, "RRL");
-    makeAction (testGame, makeCampuses);
+    makeSafeAction (testGame, makeCampuses);
     makeCampuses.actionCode = BUILD_CAMPUS;
     strcpy (makeCampuses.destination, "LRL");
-    makeAction (testGame, makeCampuses);
+    makeSafeAction (testGame, makeCampuses);
     strcpy (makeCampuses.destination, "RLRLR");
-    makeAction (testGame, makeCampuses);
+    makeSafeAction (testGame, makeCampuses);
     
     testAction.actionCode = BUILD_CAMPUS;
     strcpy (testAction.destination, "R");
@@ -1643,7 +1686,7 @@ void testIsLegalAction (void) {
 
 // Testing: int getCampuses (Game g, int player);
 // return the number of normal Campuses the specified player currently has
-void testGetCampuses (void) {
+/*void testGetCampuses (void) {
     printf ("Testing getCampuses\n");
     int player = 0;
     int anotherPlayer = 0;
@@ -1671,7 +1714,7 @@ void testGetCampuses (void) {
     testAction.actionCode = BUILD_CAMPUS;
     strcpy (testAction.destination, "LRRRL");
     // build the campus
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     // check that the campus amount is 3 now
     assert (getCampuses (testGame, player) == 3);
     
@@ -1680,7 +1723,7 @@ void testGetCampuses (void) {
     assert (getCampus (testGame, "LRRRLL") == VACANT_VERTEX);
     strcpy (testAction.destination, "LRRRLL");
     // build the campus
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     // check that the campus amount is 4 now
     assert (getCampuses (testGame, player) == 4);
 
@@ -1697,11 +1740,11 @@ void testGetCampuses (void) {
     testAction.actionCode = BUILD_CAMPUS;
     strcpy (testAction.destination, "LRR");
     // build the campus
-    makeAction (testGame, testAction);
+    makeSafeAction (testGame, testAction);
     // check that the campus amount is 3 now
     assert (getCampuses (testGame, anotherPlayer) == 3);
     printf ("getCampuses works - You are Awesome!\n\n");
-}
+}*/
 
 // roll the dice randomly
 int rollDice (int no7) {
@@ -1812,7 +1855,7 @@ void externalTest002(void) {
     a.actionCode = RETRAIN_STUDENTS;
     strncpy(a.destination, "RRL", PATH_LIMIT - 1);
     a.disciplineFrom = 3, a.disciplineTo = 5;
-    makeAction(g, a);
+    makeSafeAction(g, a);
 
     printf("Make the Trade\n");
 
