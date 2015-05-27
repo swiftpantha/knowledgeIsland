@@ -62,7 +62,12 @@ void externalTest001 (void);
 void externalTest002 (void);
 void failedExternalTestSimon (void);
 void failedExternalTestMeghana (void);
-
+void externalTestSeb (void);
+void externalTestJackson (void);
+void externalTestThomas (void);
+void externalTestNicholas (void);
+void externalTestKaylen (void);
+void externalTestYing (void);
 
 int main (int argc, char *argv[]) {
     
@@ -102,7 +107,13 @@ int main (int argc, char *argv[]) {
     failedExternalTestSimon ();
     failedExternalTestMeghana();
     failedExternalTests ();
-    externalTest002();
+    externalTest002 ();
+    externalTestSeb ();
+    //externalTestJackson (); invalid
+    externalTestThomas ();
+    //externalTestNicholas (); illegal actions
+    //externalTestKaylen ();
+    //externalTestYing (); wrong check?
 
     printf ("All tests passed. You are awesome!\n");
 
@@ -1873,6 +1884,326 @@ void externalTest002(void) {
     printf("External Test 002 end\n");
 }
 
+// Tester: sebastianholzapfel
+void externalTestSeb (void) {
+    action a;
+    int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
+    int dice[] = {9,10,8,12,6,5,3,11,3,11,4,6,4,7,9,2,8,10,5};
+    Game g = newGame(disciplines, dice);
+    if(g != NULL) {
+        a.actionCode = PASS;
+        //printf("f");
+    }
+}
+
+void externalTestJackson (void) {
+    action a;
+    int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
+    int dice[] =        {9,10,8,12,6,5,3,11,3,11,4,6,4,7,9,2,8,10,5};
+    Game g = newGame(disciplines, dice);
+    throwDice(g, 12); // students 5
+    throwDice(g, 1); // students 4
+    a.actionCode = BUILD_CAMPUS;
+    strncpy(a.destination, "LR", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = 0, a.disciplineTo = 0;
+    makeSafeAction(g, a);
+    throwDice(g, 11);
+    assert(getStudents(g, 3, 4) == 2);
+}
+
+void externalTestThomas (void) {
+    action a;
+    int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
+    int dice[] = {9,10,8,12,6,5,3,11,3,11,4,6,4,7,9,2,8,10,5};
+    Game g = newGame(disciplines, dice);
+    throwDice(g, 8);
+    a.actionCode = OBTAIN_ARC;
+    strncpy(a.destination, "L", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = -1217013512, a.disciplineTo = -163754450;
+    makeSafeAction(g, a);
+    a.actionCode = PASS;
+    strncpy(a.destination, "L", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = -1217013512, a.disciplineTo = -163754450;
+    makeSafeAction(g, a);
+    throwDice(g, 9);
+    a.actionCode = PASS;
+    strncpy(a.destination, "RR", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = -1217013512, a.disciplineTo = -163754450;
+    makeSafeAction(g, a);
+    throwDice(g, 7);
+    int regionID = 1;
+    assert(getDiscipline(g, regionID)==disciplines[regionID]);
+}
+
+void externalTestNicholas (void) {
+    action a;
+    int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
+    int dice[] = {9,10,8,12,6,5,3,11,3,11,4,6,4,7,9,2,8,10,5};
+    Game g = newGame(disciplines, dice);
+    // unused variable fix
+    if(g != NULL) {
+        a.actionCode = PASS;
+    }
+    assert(getCampus(g, "LRLRLR") == 3);
+}
+
+void externalTestKaylen (void) {
+    action a;
+    int disciplines[] = {2,5,3,5,3,1,4,4,1,4,2,3,2,0,3,5,4,2,1};
+    int dice[] = {9,10,8,12,6,5,3,11,3,11,4,6,4,7,9,2,8,10,5};
+    Game g = newGame(disciplines, dice);
+    throwDice(g, 8);
+    a.actionCode = PASS;
+    strncpy(a.destination, "kkkk", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = -1217533656, a.disciplineTo = -1217535288;
+    makeSafeAction(g, a);
+    throwDice(g, 8);
+    a.actionCode = PASS;
+    strncpy(a.destination, "kkkk", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = -1217533656, a.disciplineTo = -1217535288;
+    makeSafeAction(g, a);
+    throwDice(g, 8);
+    a.actionCode = PASS;
+    strncpy(a.destination, "kkkk", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = -1217533656, a.disciplineTo = -1217535288;
+    makeSafeAction(g, a);
+    throwDice(g, 8);
+    a.actionCode = PASS;
+    strncpy(a.destination, "kkkk", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = -1217533656, a.disciplineTo = -1217535288;
+    makeSafeAction(g, a);
+    a.actionCode = RETRAIN_STUDENTS;
+    strncpy(a.destination, "kk", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = 1, a.disciplineTo = 5;
+    makeSafeAction(g, a);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    a.actionCode = OBTAIN_ARC;
+    strncpy(a.destination, "RRLR", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = 1, a.disciplineTo = 5;
+    makeSafeAction(g, a);
+    a.actionCode = BUILD_CAMPUS;
+    strncpy(a.destination, "RRLR", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = 1, a.disciplineTo = 5;
+    makeSafeAction(g, a);
+    int currPlayer = getWhoseTurn(g);
+    assert(getStudents(g, currPlayer, 3) == 0);
+}
+
+void externalTestYing (void) {
+    action a;
+    int disciplines[] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+    int dice[] = {8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8};
+    Game g = newGame(disciplines, dice);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    throwDice(g, 8);
+    a.actionCode = OBTAIN_ARC;
+    strncpy(a.destination, "L", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = 2, a.disciplineTo = 0;
+    makeSafeAction(g, a);
+    a.actionCode = OBTAIN_ARC;
+    strncpy(a.destination, "LR", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = 2, a.disciplineTo = 0;
+    makeSafeAction(g, a);
+    a.actionCode = OBTAIN_ARC;
+    strncpy(a.destination, "LRL", PATH_LIMIT - 1);
+    a.destination[PATH_LIMIT - 1] = 0;
+    a.disciplineFrom = 2, a.disciplineTo = 0;
+    makeSafeAction(g, a);
+    assert(getARC(g, "LRRR") == 1);
+}
 
 // print player's current score for testing purposes
 void printScore (Game g, int player) {
